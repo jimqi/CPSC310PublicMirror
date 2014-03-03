@@ -7,6 +7,6 @@ package server;
  * @author Charles
  *
  */
-public class CSVImporter {
+public class CSVImporter extends DataImporter {
 
 }
