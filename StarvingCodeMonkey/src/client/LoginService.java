@@ -1,7 +1,10 @@
+/**
+ * RPC Call for Login Function
+ */
 package client;
 
 /**
- * RPC call for login function
+ * 
  * @author Charles
  *
  */
