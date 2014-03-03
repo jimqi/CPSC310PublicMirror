@@ -9,4 +9,10 @@ package client;
  */
 public class StorageService {
 
+	int google;
+	
+	public StorageService (int g){
+		google = g;
+		return;
+	}
 }
