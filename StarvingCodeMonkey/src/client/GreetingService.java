@@ -4,7 +4,7 @@
 package client;
 //TODO: Jim
 //TEST
-/**
+/**TEST
  * @author Charles
  *
  */
