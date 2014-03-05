@@ -16,5 +16,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Eclipse_Java/eclipse-standard-kepler-R-win32/plugins/com.google.gwt.eclipse.sdkbundle_2.5.1/gwt-2.5.1/validation-api-1.0.0.GA-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Eclipse_Java/eclipse-standard-kepler-R-win32/plugins/com.google.gwt.eclipse.sdkbundle_2.5.1/gwt-2.5.1/validation-api-1.0.0.GA.jar" sourcepath="C:/Eclipse_Java/eclipse-standard-kepler-R-win32/plugins/com.google.gwt.eclipse.sdkbundle_2.5.1/gwt-2.5.1/validation-api-1.0.0.GA-sources.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
