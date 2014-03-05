@@ -3,8 +3,8 @@
  */
 package server;
 
-import com.google.gwt.sample.stockwatcher.client.GreetingService;
-import com.google.gwt.sample.stockwatcher.shared.FieldVerifier;
+import client.GreetingService;
+import shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 //TODO: Jim
