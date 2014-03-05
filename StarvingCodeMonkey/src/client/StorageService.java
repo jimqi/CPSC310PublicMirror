@@ -7,12 +7,20 @@ package client;
  * @author Charles
  *
  */
-public class StorageService {
 
-	int google;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+@RemoteServiceRelativePath("user")
+public interface StorageService extends RemoteService {
 	
-	public StorageService (int g){
-		google = g;
-		return;
-	}
+	public void addVisited(String place);
+	public void removeVisited(String place);
+	public String[] getVisited();
+	
+	public void addFav(String place);
+	public void removeFav(String place);
+	public String[] getFavs();
+	
+	public void setRating(String place, int rating);	
 }
