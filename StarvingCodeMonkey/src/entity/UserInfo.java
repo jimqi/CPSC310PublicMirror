@@ -2,7 +2,7 @@
  * Store Userinfo to Database 
  */
 package entity;
-//TODO: Kevin
+//TODO:
 
 /**
  * @author Charles
