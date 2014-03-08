@@ -45,8 +45,8 @@ public class KillersProject implements EntryPoint {
 	 */
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
-	
-	private VerticalPanel mainPanel = new VerticalPanel(); 
+
+	private VerticalPanel mainPanel = new VerticalPanel();
 	private FlexTable restaurantFlexTable = new FlexTable();
 
 	/**
@@ -54,16 +54,16 @@ public class KillersProject implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		// TODO get map into a seperate panel
-	    // Create table for restaurant data.
+		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Restaurant");
 		restaurantFlexTable.setText(0, 1, "Food Type");
-		
-		// Assemble Main panel.
-	    mainPanel.add(restaurantFlexTable);
 
-	    // Associate the Main panel with the div tag.
-	    RootPanel.get("content-window").add(mainPanel);
-//------------------------------------------------------------------------	    
+		// Assemble Main panel.
+		mainPanel.add(restaurantFlexTable);
+
+		// Associate the Main panel with the div tag.
+		RootPanel.get("content-window").add(mainPanel);
+		// ------------------------------------------------------------------------
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
@@ -72,11 +72,10 @@ public class KillersProject implements EntryPoint {
 		// We can add style names to widgets
 		sendButton.addStyleName("sendButton");
 
-		// Add the nameField and sendButton to the RootPanel
-		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
-		RootPanel.get("errorLabelContainer").add(errorLabel);
+		// Add the nameField and sendButton to the main panel
+		mainPanel.add(nameField);
+		mainPanel.add(sendButton);
+		mainPanel.add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
 		nameField.setFocus(true);
@@ -170,22 +169,22 @@ public class KillersProject implements EntryPoint {
 			}
 		}
 
-		MapOptions options = MapOptions.create();
-		options.setCenter(LatLng.create(-34.397, 150.644));
-		options.setZoom(6);
-		options.setMapTypeId(MapTypeId.ROADMAP);
-		options.setDraggable(true);
-		options.setMapTypeControl(true);
-		options.setScaleControl(true);
-		options.setScrollwheel(true);
-
-		SimplePanel widg = new SimplePanel();
-
-		widg.setSize("100%", "100%");
-
-		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-
-		RootLayoutPanel.get().add(widg);
+//		MapOptions options = MapOptions.create();
+//		options.setCenter(LatLng.create(-34.397, 150.644));
+//		options.setZoom(6);
+//		options.setMapTypeId(MapTypeId.ROADMAP);
+//		options.setDraggable(true);
+//		options.setMapTypeControl(true);
+//		options.setScaleControl(true);
+//		options.setScrollwheel(true);
+//
+//		SimplePanel widg = new SimplePanel();
+//
+//		widg.setSize("100%", "100%");
+//
+//		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
+//
+//		RootLayoutPanel.get().add(widg);
 
 	}
 }
