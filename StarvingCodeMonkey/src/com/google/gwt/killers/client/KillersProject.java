@@ -1,5 +1,6 @@
 package com.google.gwt.killers.client;
 
+import static com.google.gwt.dom.client.Style.Unit.PCT;
 import com.google.gwt.killers.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -11,14 +12,16 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapTypeId;
@@ -42,11 +45,31 @@ public class KillersProject implements EntryPoint {
 	 */
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
+	
+	private LayoutPanel mainPanel = new LayoutPanel(); 
+	private VerticalPanel restaurantPanel = new VerticalPanel(); 
+	private FlexTable restaurantFlexTable = new FlexTable();
+	private HTMLPanel mapPanel = new HTMLPanel("<div id=\"map-canvas\"></div>");
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		// TODO get map into a seperate panel
+	    // Create table for restaurant data.
+		restaurantFlexTable.setText(0, 0, "Restaurant");
+		restaurantFlexTable.setText(0, 1, "Food Type");
+		
+		// Assemble Main panel.
+	    mainPanel.add(restaurantFlexTable);
+	    mainPanel.add(mapPanel);
+	    
+	    mainPanel.setWidgetLeftWidth(restaurantFlexTable, 0, PCT, 50, PCT);  // Left panel
+	    mainPanel.setWidgetRightWidth(mapPanel, 0, PCT, 50, PCT); // Right panel
+
+	    // Associate the Main panel with the HTML host page.
+	    RootPanel.get("stockList").add(mainPanel);
+//------------------------------------------------------------------------	    
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
