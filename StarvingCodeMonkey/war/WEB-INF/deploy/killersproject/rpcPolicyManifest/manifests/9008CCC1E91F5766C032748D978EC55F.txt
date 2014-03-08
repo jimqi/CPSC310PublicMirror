@@ -1,0 +1,2 @@
+serviceClass: com.google.gwt.killers.client.GreetingService
+path: 7FE6B1BC3509E104DD40E68AA4017CB8.gwt.rpc

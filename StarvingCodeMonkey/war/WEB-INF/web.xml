@@ -5,35 +5,20 @@
 	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
 
 	<!-- Servlets -->
-	<!-- <servlet> <servlet-name>greetServlet</servlet-name> <servlet-class>com.google.gwt.sample.stockwatcher.server.GreetingServiceImpl</servlet-class> 
-		</servlet> <servlet-mapping> <servlet-name>greetServlet</servlet-name> <url-pattern>/stockwatcher/greet</url-pattern> 
-		</servlet-mapping> -->
-
 	<servlet>
-		<servlet-name>loginService</servlet-name>
-		<servlet-class>server.LoginServiceImpl
-		</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>greetingService</servlet-name>
-		<servlet-class>server.GreetingServiceImpl
+		<servlet-name>greetServlet</servlet-name>
+		<servlet-class>com.google.gwt.killers.server.GreetingServiceImpl
 		</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>loginService</servlet-name>
-		<url-pattern>/starvingcodemonkey/login</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>greetingService</servlet-name>
-		<url-pattern>/starvingcodemonkey/greeting</url-pattern>
+		<servlet-name>greetServlet</servlet-name>
+		<url-pattern>/killersproject/greet</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
-		<welcome-file>StarvingCodeMonkey.html</welcome-file>
+		<welcome-file>KillersProject.html</welcome-file>
 	</welcome-file-list>
 
 </web-app>
