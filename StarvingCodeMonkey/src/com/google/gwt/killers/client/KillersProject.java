@@ -46,10 +46,8 @@ public class KillersProject implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	
-	private LayoutPanel mainPanel = new LayoutPanel(); 
-	private VerticalPanel restaurantPanel = new VerticalPanel(); 
+	private VerticalPanel mainPanel = new VerticalPanel(); 
 	private FlexTable restaurantFlexTable = new FlexTable();
-	private HTMLPanel mapPanel = new HTMLPanel("<div id=\"map-canvas\"></div>");
 
 	/**
 	 * This is the entry point method.
@@ -62,13 +60,9 @@ public class KillersProject implements EntryPoint {
 		
 		// Assemble Main panel.
 	    mainPanel.add(restaurantFlexTable);
-	    mainPanel.add(mapPanel);
-	    
-	    mainPanel.setWidgetLeftWidth(restaurantFlexTable, 0, PCT, 50, PCT);  // Left panel
-	    mainPanel.setWidgetRightWidth(mapPanel, 0, PCT, 50, PCT); // Right panel
 
-	    // Associate the Main panel with the HTML host page.
-	    RootPanel.get("stockList").add(mainPanel);
+	    // Associate the Main panel with the div tag.
+	    RootPanel.get("content-window").add(mainPanel);
 //------------------------------------------------------------------------	    
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();

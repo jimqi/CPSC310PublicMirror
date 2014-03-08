@@ -7,5 +7,7 @@
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Jim Qi/git/The-Cereal-Killers/StarvingCodeMonkey/war/WEB-INF/lib/GwtEarth3-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jim Qi/git/The-Cereal-Killers/StarvingCodeMonkey/war/WEB-INF/lib/gwt-maps.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jim Qi/Desktop/Workspace/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.9/appengine-java-sdk-1.8.9/lib/user/appengine-jsr107cache-1.8.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jim Qi/Desktop/Workspace/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.9/appengine-java-sdk-1.8.9/lib/user/appengine-api-1.0-sdk-1.8.9.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
