@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>KML Layers</title>
-    <style>
-      html, body, #map-canvas {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-    </style>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-    <script>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<title>KML Layers</title>
+<style>
+html,body,#map-canvas {
+	height: 100%;
+	margin: 0px;
+	padding: 0px
+}
+</style>
+<script
+	src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script>
 function initialize() {
   var vancouver = new google.maps.LatLng(49.2496600,-123.1193400);
   var mapOptions = {
@@ -23,16 +24,23 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   var ctaLayer = new google.maps.KmlLayer({
-    url: 'http://data.vancouver.ca/download/kml/food_vendor_pilot.kmz'
+    url: 'http://data.vancouver.ca/download/kml/parking_meter_rates_and_time_limits.kmz'
+  });
+  google.maps.event.addListener(ctaLayer, "status_changed", function() {
+    ctaLayer2.setMap(map);
   });
   ctaLayer.setMap(map);
-}
 
+  var ctaLayer2 = new google.maps.KmlLayer({
+    url: 'http://data.vancouver.ca/download/kml/food_vendor_pilot.kmz'
+  });
+}
 google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
-  </head>
-  <body>
-    <div id="map-canvas"></div>
-  </body>
+</head>
+<body>
+	<div id="map-canvas" style="width: 79%; height: 100%; float: left"></div>
+	<div id="content-window" style="width: 19%; height: 100%; float: left"></div>
+</body>
 </html>
