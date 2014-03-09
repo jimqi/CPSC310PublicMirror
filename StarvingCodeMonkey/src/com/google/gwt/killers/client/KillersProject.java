@@ -14,7 +14,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -45,7 +44,6 @@ public class KillersProject implements EntryPoint {
 			.create(GreetingService.class);
 
 	private VerticalPanel mainPanel = new VerticalPanel();
-	private CellTable restaurantFlexTable = new CellTable();
 
 	/**
 	 * This is the entry point method.
