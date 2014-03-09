@@ -1,10 +1,20 @@
 package com.google.gwt.killers.entity;
 
-public abstract class Place {
+import java.io.Serializable;
+
+public abstract class Place implements Serializable {
+
+	private static final long serialVersionUID = -4904011851500496233L;
 
 	private String name;
 	private float latitude;
 	private float longitude;
+
+	public Place() {
+		this.name = "Place name";
+		this.latitude = 0;
+		this.longitude = 100;
+	}
 
 	public Place(String name, float latitude, float longitude) {
 		this.name = name;

@@ -6,15 +6,25 @@
 
 	<!-- Servlets -->
 	<servlet>
-		<servlet-name>greetServlet</servlet-name>
-		<servlet-class>com.google.gwt.killers.server.GreetingServiceImpl
+		<servlet-name>loginService</servlet-name>
+		<servlet-class>com.google.gwt.killers.server.LoginServiceImpl
 		</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>parkService</servlet-name>
+		<servlet-class>com.google.gwt.killers.server.ParkServiceImpl
+		</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>greetServlet</servlet-name>
-		<url-pattern>/killersproject/greet</url-pattern>
+		<servlet-name>loginService</servlet-name>
+		<url-pattern>/killersproject/login</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>parkService</servlet-name>
+		<url-pattern>/killersproject/park</url-pattern>
 	</servlet-mapping>
 
 
