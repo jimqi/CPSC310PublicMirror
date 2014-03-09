@@ -34,7 +34,7 @@
 	</servlet-mapping>
 	
 	<servlet-mapping>
-		<servlet-name>greetServlet</servlet-name>
+		<servlet-name>ImporterServlet</servlet-name>
 		<url-pattern>/killersproject/Importer</url-pattern>
 	</servlet-mapping>
 
