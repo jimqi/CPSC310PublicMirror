@@ -11,10 +11,23 @@
 		</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>DataServiceImpl</servlet-name>
+		<servlet-class>com.google.gwt.killers.server.DataServiceImpl
+		</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>greetServlet</servlet-name>
 		<url-pattern>/killersproject/greet</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>DataServiceImpl</servlet-name>
+		<url-pattern>/killersproject/Dataset</url-pattern>
+	</servlet-mapping>
+
+
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
