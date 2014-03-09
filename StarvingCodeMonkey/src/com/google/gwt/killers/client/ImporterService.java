@@ -1,4 +1,4 @@
-package com.google.gwt.killers.server;
+package com.google.gwt.killers.client;
 
 /**
  * RPC call for importerservice

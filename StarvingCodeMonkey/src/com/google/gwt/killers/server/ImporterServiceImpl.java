@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import com.google.gwt.killers.client.ImporterService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ImporterServiceImpl extends RemoteServiceServlet implements
