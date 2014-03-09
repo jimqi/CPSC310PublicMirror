@@ -25,7 +25,7 @@ public class UserLocation {
 	double lat;
 	double longit;
 	String endReq = "Vancouver,+BC&sensor=false&key=API_KEY";
-	////////// get api key Q_Q"
+
 	
 	
 
@@ -62,7 +62,7 @@ public class UserLocation {
     		} catch (RequestException e) {
     		  // Couldn't connect to server
     		}
-    		return info;
+    		return null;
     	}
 	
 	
