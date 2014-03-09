@@ -21,7 +21,7 @@ import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.GoogleMap;
-
+ 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -52,6 +52,12 @@ public class KillersProject implements EntryPoint {
 		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Restaurant");
 		restaurantFlexTable.setText(0, 1, "Food Type");
+		
+	    // Add styles to elements in the stock list table.
+		restaurantFlexTable.setCellPadding(6);
+		restaurantFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
+		restaurantFlexTable.addStyleName("watchList");
+		restaurantFlexTable.getCellFormatter().addStyleName(0, 1, "watchListNumericColumn");
 
 		// Assemble Main panel.
 		mainPanel.add(restaurantFlexTable);
