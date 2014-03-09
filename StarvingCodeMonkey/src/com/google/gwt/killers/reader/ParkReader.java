@@ -13,6 +13,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import au.com.bytecode.opencsv.CSVParser;
 
@@ -20,9 +22,12 @@ import com.google.gwt.killers.entity.Park;
 
 public class ParkReader {
 
+	Logger logger = Logger.getLogger("ParkReaderLogger");
+
 	private static final String PARK_DATA_URL = "ftp://webftp.vancouver.ca/OpenData/csv/parks.csv";
 
-	private static final String PARK_DATA_FILENAME = "data\\parks.csv";
+	private static final String PARK_DATA_FILENAME = "WEB-INF" + File.separator
+			+ "data" + File.separator + "parks.csv";
 
 	public ParkReader() {
 		// TODO Auto-generated constructor stub
@@ -72,8 +77,10 @@ public class ParkReader {
 			in.close();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			logger.log(Level.SEVERE, "Exception: " + e.getLocalizedMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.log(Level.SEVERE, "Exception: " + e.getLocalizedMessage());
 		}
 
 		return parks;
