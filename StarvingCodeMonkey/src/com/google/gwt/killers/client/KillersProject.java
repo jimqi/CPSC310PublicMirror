@@ -1,5 +1,6 @@
 package com.google.gwt.killers.client;
 
+import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.killers.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -8,6 +9,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -42,28 +45,49 @@ public class KillersProject implements EntryPoint {
 			.create(GreetingService.class);
 
 	private VerticalPanel mainPanel = new VerticalPanel();
-	private FlexTable restaurantFlexTable = new FlexTable();
+	private CellTable restaurantFlexTable = new CellTable();
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		// TODO get map into a seperate panel
-		// Create table for restaurant data.
-		restaurantFlexTable.setText(0, 0, "Restaurant");
-		restaurantFlexTable.setText(0, 1, "Food Type");
+		//TODO Create CellTable
 		
-	    // Add styles to elements in the stock list table.
-		restaurantFlexTable.setCellPadding(6);
-		restaurantFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
-		restaurantFlexTable.addStyleName("watchList");
-		restaurantFlexTable.getCellFormatter().addStyleName(0, 1, "watchListNumericColumn");
+		 // Create a CellTable.
+	    final CellTable<Restaurant> table = new CellTable<Restaurant>();
 
-		// Assemble Main panel.
-		mainPanel.add(restaurantFlexTable);
+	    // Create name column.
+	    TextColumn<Restaurant> nameColumn = new TextColumn<Restaurant>() {
+	      @Override
+	      public String getValue(Restaurant restaurant) {
+	        return restaurant.getName();
+	      }
+	    };
 
-		// Associate the Main panel with the div tag.
-		RootPanel.get("content-window").add(mainPanel);
+	    // Make the name column sortable.
+	    nameColumn.setSortable(true);
+
+	    // Create address column.
+	    TextColumn<Restaurant> addressColumn = new TextColumn<Restaurant>() {
+	      @Override
+	      public String getValue(Restaurant restaurant) {
+	        return restaurant.getAddress();
+	      }
+	    };
+	    
+	    // Add the columns.
+	    table.addColumn(nameColumn, "Name");
+	    table.addColumn(addressColumn, "Address");
+	    
+	    // Set the total row count. You might send an RPC request to determine the
+	    // total row count.
+	    table.setRowCount(100, true);
+	    
+	    // Set the range to display.
+	    table.setVisibleRange(0, 3);
+
+		// Add to rootPanel
+		RootPanel.get("content-window").add(table);
 		// ------------------------------------------------------------------------
 		final Button sendButton = new Button("Send");
 		final TextBox nameField = new TextBox();
