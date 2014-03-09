@@ -32,3 +32,21 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+/* header row */
+.watchListHeader {
+  background-color: #2062B8;
+  color: white;
+  font-style: italic;
+}
+
+/* restaurant flex table */
+.watchList {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+}
+
+.watchListNumericColumn {
+  text-align: right;
+  width:8em;
