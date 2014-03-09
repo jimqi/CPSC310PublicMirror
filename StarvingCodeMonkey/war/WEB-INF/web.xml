@@ -16,7 +16,7 @@
 		<servlet-class>com.google.gwt.killers.server.DataServiceImpl
 		</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>ImporterServiceImpl</servlet-name>
 		<servlet-class>com.google.gwt.killers.server.ImporterServiceImpl
@@ -27,18 +27,16 @@
 		<servlet-name>greetServlet</servlet-name>
 		<url-pattern>/killersproject/greet</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>DataServlet</servlet-name>
 		<url-pattern>/killersproject/Dataset</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>ImporterServlet</servlet-name>
 		<url-pattern>/killersproject/Importer</url-pattern>
 	</servlet-mapping>
-
-
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
