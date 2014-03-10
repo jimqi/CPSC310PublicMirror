@@ -6,30 +6,30 @@ public abstract class Place implements Serializable {
 
 	private static final long serialVersionUID = -4904011851500496233L;
 
-	private Long id;
+	private String id;
 	private String name;
 	private float latitude;
 	private float longitude;
 
 	public Place() {
-		this.id = Long.valueOf(0);
+		this.id = "A1";
 		this.name = "Place name";
 		this.latitude = 0;
 		this.longitude = 100;
 	}
 
-	public Place(Long id, String name, float latitude, float longitude) {
+	public Place(String id, String name, float latitude, float longitude) {
 		this.id = id;
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

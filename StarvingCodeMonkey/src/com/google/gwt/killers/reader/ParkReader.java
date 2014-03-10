@@ -50,7 +50,7 @@ public class ParkReader {
 			String firstLine = in.readLine();
 
 			String inputLine;
-			Long id;
+			String id;
 			String name;
 			float lat;
 			float lon;
@@ -61,7 +61,7 @@ public class ParkReader {
 				// System.out.println(inputLine);
 				String[] values = parser.parseLine(inputLine);
 				if (values.length >= 14) {
-					id = Long.valueOf(values[0]);
+					id = values[0];
 					name = values[1];
 					// parse out the lat/lon
 					String latLon = values[7];

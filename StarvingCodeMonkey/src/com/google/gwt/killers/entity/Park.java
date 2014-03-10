@@ -18,7 +18,7 @@ public class Park extends Place implements Serializable {
 		neighbourhood = "Park neighbourhood";
 	}
 
-	public Park(Long id, String name, float latitude, float longitude,
+	public Park(String id, String name, float latitude, float longitude,
 			String address, String url, String neighbourhood) {
 		super(id, name, latitude, longitude);
 		this.address = address;

@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
@@ -39,6 +40,8 @@ public class KillersProject implements EntryPoint {
 			+ "connection and try again.";
 
 	private VerticalPanel mainPanel = new VerticalPanel();
+
+	private VerticalPanel mapPanel = new VerticalPanel();
 
 	private Anchor signInLink = new Anchor("Login");
 	private Anchor signOutLink = new Anchor("Logout");
@@ -227,23 +230,22 @@ public class KillersProject implements EntryPoint {
 		// }
 		// }
 
-		// MapOptions options = MapOptions.create();
-		// options.setCenter(LatLng.create(-34.397, 150.644));
-		// options.setZoom(6);
-		// options.setMapTypeId(MapTypeId.ROADMAP);
-		// options.setDraggable(true);
-		// options.setMapTypeControl(true);
-		// options.setScaleControl(true);
-		// options.setScrollwheel(true);
-		//
-		// SimplePanel widg = new SimplePanel();
-		//
-		// widg.setSize("100%", "100%");
-		//
-		// GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-		//
-		// RootLayoutPanel.get().add(widg);
+		MapOptions options = MapOptions.create();
+		options.setCenter(LatLng.create(49.195944, 123.1775715));
+		options.setZoom(10);
+		options.setMapTypeId(MapTypeId.ROADMAP);
+		options.setDraggable(true);
+		options.setMapTypeControl(true);
+		options.setScaleControl(true);
+		options.setScrollwheel(true);
 
+		SimplePanel widg = new SimplePanel();
+
+		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
+
+		mapPanel.add(widg);
+		// Associate the Map panel with the HTML host page.
+		RootPanel.get("map-canvas").add(mapPanel);
 	}
 
 	private void loadLogin() {
@@ -307,7 +309,7 @@ public class KillersProject implements EntryPoint {
 	private void displayPark(final Park obj) {
 		// Add the park to the table.
 		int row = parksFlexTable.getRowCount();
-		final Long parkId = obj.getId();
+		final String parkId = obj.getId();
 
 		parksFlexTable.setText(row, 1, obj.getAddress());
 		parksFlexTable.setText(row, 2, obj.getNeighbourhood());
@@ -321,8 +323,7 @@ public class KillersProject implements EntryPoint {
 					logger.log(Level.INFO, "Selected park " + park.getName()
 							+ " with lat/lon " + park.getLatitude() + "/"
 							+ park.getLongitude());
-				}
-				else {
+				} else {
 					logger.log(Level.SEVERE, "No park was found");
 				}
 			}
@@ -330,7 +331,7 @@ public class KillersProject implements EntryPoint {
 		parksFlexTable.setWidget(row, 0, parkName);
 	}
 
-	private Park selectPark(final Long parkId) {
+	private Park selectPark(final String parkId) {
 		for (Park p : parkList) {
 			if (parkId.equals(p.getId())) {
 				return p;

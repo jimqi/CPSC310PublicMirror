@@ -6,7 +6,7 @@ public class Restaurant extends Place {
 	private String vendorType;
 	private String Address;
 
-	public Restaurant(Long id, String name, String status, String vendorType,
+	public Restaurant(String id, String name, String status, String vendorType,
 			String Address, float latitude, float longitude) {
 		super(id, name, latitude, longitude);
 		this.status = status;
