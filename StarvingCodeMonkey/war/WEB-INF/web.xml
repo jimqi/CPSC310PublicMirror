@@ -16,6 +16,12 @@
 		<servlet-class>com.google.gwt.killers.server.ParkServiceImpl
 		</servlet-class>
 	</servlet>
+	
+		<servlet>
+		<servlet-name>restaurantService</servlet-name>
+		<servlet-class>com.google.gwt.killers.server.RestaurantServiceImpl
+		</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>loginService</servlet-name>
@@ -26,8 +32,11 @@
 		<servlet-name>parkService</servlet-name>
 		<url-pattern>/killersproject/park</url-pattern>
 	</servlet-mapping>
-
-
+	
+	<servlet-mapping>
+		<servlet-name>restaurantService</servlet-name>
+		<url-pattern>/killersproject/restaurant</url-pattern>
+	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
