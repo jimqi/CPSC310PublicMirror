@@ -12,19 +12,22 @@ public class Restaurant extends Place implements Serializable {
 	private String status;
 	private String vendorType;
 	private String Address;
+	private String food;
 	
 	public Restaurant() {
 		this.status = "status";
 		this.vendorType = "vendorType";
 		this.Address = "Address";
+		this.food = "food";
 	}
 
 	public Restaurant(String id, String name, String status, String vendorType,
-			String Address, float latitude, float longitude) {
+			String Address, float latitude, float longitude, String food) {
 		super(id, name, latitude, longitude);
 		this.status = status;
 		this.vendorType = vendorType;
 		this.Address = Address;
+		this.food = food;
 	}
 
 	public String getstatus() {
@@ -49,5 +52,13 @@ public class Restaurant extends Place implements Serializable {
 
 	public void setAddress(String Address) {
 		this.Address = Address;
+	}
+
+	public String getFood() {
+		return food;
+	}
+
+	public void setFood(String Food) {
+		this.food = Food;
 	}
 }

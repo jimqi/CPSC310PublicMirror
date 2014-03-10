@@ -295,6 +295,7 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setText(0, 0, "Name");
 		restaurantFlexTable.setText(0, 1, "Status");
 		restaurantFlexTable.setText(0, 2, "Address");
+		restaurantFlexTable.setText(0, 3, "Food");
 
 		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
@@ -420,5 +421,6 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setText(row, 0, obj.getName());
 		restaurantFlexTable.setText(row, 1, obj.getstatus());
 		restaurantFlexTable.setText(row, 2, obj.getAddress());
+		restaurantFlexTable.setText(row, 3, obj.getFood());
 	}
 }
