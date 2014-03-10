@@ -30,6 +30,9 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.GoogleMap;
 
+import com.google.gwt.maps.client.overlay.Marker;
+
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -63,6 +66,9 @@ public class KillersProject implements EntryPoint {
 	private TextBox userNumTextBox = new TextBox();
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
+	
+	// marker on the map
+	Marker m = new Marker(com.google.gwt.maps.client.geom.LatLng.newInstance(0.0, 0.0));
 	
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
