@@ -1,7 +1,14 @@
 package com.google.gwt.killers.entity;
 
-public class Restaurant extends Place {
+import java.io.Serializable;
 
+public class Restaurant extends Place implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4482117465037115147L;
+	
 	private String status;
 	private String vendorType;
 	private String Address;

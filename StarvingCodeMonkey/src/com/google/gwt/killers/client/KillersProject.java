@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.killers.entity.Park;
+import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,6 +52,7 @@ public class KillersProject implements EntryPoint {
 			"Please login to the applicattion using your Google Account.");
 
 	private FlexTable parksFlexTable = new FlexTable();
+	private Button changeButtonRestaurant = new Button("Add");
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -59,6 +61,7 @@ public class KillersProject implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
+	private final RestaurantServiceAsync restaurantService = GWT.create(RestaurantService.class);
 
 	private List<Park> parkList = new ArrayList<Park>();
 
@@ -257,6 +260,14 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void loadAppData() {
+		
+		// Listen for mouse events on the Add button.
+	    changeButtonRestaurant.addClickHandler(new ClickHandler() {
+	      public void onClick(ClickEvent event) {
+	        changeRestaurant();
+	      }
+	    });
+	    
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
@@ -275,6 +286,7 @@ public class KillersProject implements EntryPoint {
 
 		// Assemble Main panel.
 		mainPanel.add(signOutLink);
+		mainPanel.add(changeButtonRestaurant);
 		mainPanel.add(parksFlexTable);
 
 		// Associate the Main panel with the HTML host page.
@@ -348,5 +360,38 @@ public class KillersProject implements EntryPoint {
 			Label errorLabel = new Label(SERVER_ERROR);
 			mainPanel.add(errorLabel);
 		}
+	}
+	
+	private void changeRestaurant() {
+		parksFlexTable.setText(0, 1, "Status");
+		parksFlexTable.setText(0, 2, "Address");
+		loadRestaurants();
+	}
+
+	private void loadRestaurants() {
+		restaurantService.getRestaurants(new AsyncCallback<List<Restaurant>>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+
+			@Override
+			public void onSuccess(List<Restaurant> result) {
+				displayRestaurants(result);
+			}
+		});
+	}
+	
+	private void displayRestaurants(List<Restaurant> restaurants) {
+		for (Restaurant restaurant : restaurants) {
+			displayRestaurant(restaurant);
+		}
+	}
+
+	private void displayRestaurant(final Restaurant obj) {
+		// Add the park to the table.
+		int row = parksFlexTable.getRowCount();
+		parksFlexTable.setText(row, 0, obj.getName());
+		parksFlexTable.setText(row, 1, obj.getstatus());
+		parksFlexTable.setText(row, 2, obj.getAddress());
 	}
 }
