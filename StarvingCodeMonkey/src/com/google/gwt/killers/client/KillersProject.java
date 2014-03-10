@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.google.gwt.killers.entity.Park;
 import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.core.client.EntryPoint;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
@@ -41,9 +42,7 @@ public class KillersProject implements EntryPoint {
 			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
 
-	private VerticalPanel mainPanel = new VerticalPanel();
-	
-	private TabLayoutPanel p = new TabLayoutPanel(1.5, Unit.EM);
+	private TabPanel mainPanel = new TabPanel();
 
 	private VerticalPanel mapPanel = new VerticalPanel();
 
@@ -56,7 +55,6 @@ public class KillersProject implements EntryPoint {
 
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
-	private Button changeButtonRestaurant = new Button("Add");
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -248,34 +246,33 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void loadAppData() {
-
-		// Listen for mouse events on the Add button.
-		changeButtonRestaurant.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				changeRestaurant();
-			}
-		});
+		// Assemble Main panel.
+		//mainPanel.add(signOutLink);
+		mainPanel.add(restaurantFlexTable, "Restaurants");
+		mainPanel.add(parksFlexTable, "Parks");
 
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
-		// Create table for stock data.
+		// Create table for park data.
 		parksFlexTable.setText(0, 0, "Name");
 		parksFlexTable.setText(0, 1, "Address");
 		parksFlexTable.setText(0, 2, "Neighbourhood");
+		
+		// Create table for restaurant data.
+		restaurantFlexTable.setText(0, 0, "Name");
+		restaurantFlexTable.setText(0, 1, "Status");
+		restaurantFlexTable.setText(0, 2, "Address");
 
-		// Add styles to elements in the stock list table.
+		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
-
-		// Add styles to elements in the stock list table.
 		parksFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
 		parksFlexTable.addStyleName("watchList");
+		restaurantFlexTable.setCellPadding(6);
+		restaurantFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
+		restaurantFlexTable.addStyleName("watchList");
 		loadParks();
-
-		// Assemble Main panel.
-		mainPanel.add(signOutLink);
-		mainPanel.add(changeButtonRestaurant);
-		mainPanel.add(parksFlexTable);
+		loadRestaurants();
 
 		MapOptions options = MapOptions.create();
 		options.setCenter(LatLng.create(49.195944, 123.1775715));
@@ -291,7 +288,7 @@ public class KillersProject implements EntryPoint {
 
 		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
 
-		mainPanel.add(widg);
+		mainPanel.add(widg, "Logging");
 
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(mainPanel);
@@ -366,24 +363,6 @@ public class KillersProject implements EntryPoint {
 		}
 	}
 
-	private void changeRestaurant() {
-		mainPanel.remove(parksFlexTable);
-		
-		// Create table for stock data.
-		parksFlexTable.setText(0, 0, "Name");
-		parksFlexTable.setText(0, 1, "Status");
-		parksFlexTable.setText(0, 2, "Address");
-
-		// Add styles to elements in the stock list table.
-		parksFlexTable.setCellPadding(6);
-
-		// Add styles to elements in the stock list table.
-		parksFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
-		parksFlexTable.addStyleName("watchList");
-		mainPanel.add(parksFlexTable);
-		loadRestaurants();
-	}
-
 	private void loadRestaurants() {
 		restaurantService.getRestaurants(new AsyncCallback<List<Restaurant>>() {
 			public void onFailure(Throwable error) {
@@ -405,9 +384,9 @@ public class KillersProject implements EntryPoint {
 
 	private void displayRestaurant(final Restaurant obj) {
 		// Add the park to the table.
-		int row = parksFlexTable.getRowCount();
-		parksFlexTable.setText(row, 0, obj.getName());
-		parksFlexTable.setText(row, 1, obj.getstatus());
-		parksFlexTable.setText(row, 2, obj.getAddress());
+		int row = restaurantFlexTable.getRowCount();
+		restaurantFlexTable.setText(row, 0, obj.getName());
+		restaurantFlexTable.setText(row, 1, obj.getstatus());
+		restaurantFlexTable.setText(row, 2, obj.getAddress());
 	}
 }
