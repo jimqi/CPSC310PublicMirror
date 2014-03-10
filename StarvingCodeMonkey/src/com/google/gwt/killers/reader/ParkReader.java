@@ -50,23 +50,31 @@ public class ParkReader {
 			String firstLine = in.readLine();
 
 			String inputLine;
+			Long id;
 			String name;
 			float lat;
 			float lon;
 			String address;
 			String parkUrl;
+			String neighbourhood;
 			while ((inputLine = in.readLine()) != null) {
 				// System.out.println(inputLine);
 				String[] values = parser.parseLine(inputLine);
 				if (values.length >= 14) {
+					id = Long.valueOf(values[0]);
 					name = values[1];
-					// TODO parse out the lat/lon
-					lat = 0; // Float.valueOf(values[1]);
-					lon = 100; // Float.valueOf(values[2]);
+					// parse out the lat/lon
+					String latLon = values[7];
+					String[] location = latLon.split(",");
+					lat = Float.valueOf(location[0]);
+					lon = Float.valueOf(location[1]);
+
 					address = values[3] + " " + values[4];
 					parkUrl = values[10];
+					neighbourhood = values[9];
 
-					Park p = new Park(name, lat, lon, address, parkUrl);
+					Park p = new Park(id, name, lat, lon, address, parkUrl,
+							neighbourhood);
 					parks.add(p);
 				} else {
 					System.err

@@ -1,15 +1,16 @@
 package com.google.gwt.killers.entity;
 
 public class Restaurant extends Place {
-	
+
 	private String status;
 	private String vendorType;
 	private String Address;
 
-	public Restaurant(String name, String status, String vendorType, String Address, float latitude, float longitude) {
-		super(name, latitude, longitude);
+	public Restaurant(Long id, String name, String status, String vendorType,
+			String Address, float latitude, float longitude) {
+		super(id, name, latitude, longitude);
 		this.status = status;
-		this. vendorType = vendorType;
+		this.vendorType = vendorType;
 		this.Address = Address;
 	}
 
@@ -20,7 +21,7 @@ public class Restaurant extends Place {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public String getvendorType() {
 		return vendorType;
 	}
@@ -28,7 +29,7 @@ public class Restaurant extends Place {
 	public void setVendorType(String vendorType) {
 		this.vendorType = vendorType;
 	}
-	
+
 	public String getAddress() {
 		return Address;
 	}

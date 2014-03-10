@@ -10,16 +10,20 @@ public class Park extends Place implements Serializable {
 
 	private String url;
 
+	private String neighbourhood;
+
 	public Park() {
 		this.address = "Park address";
 		this.url = "Park URL";
+		neighbourhood = "Park neighbourhood";
 	}
 
-	public Park(String name, float latitude, float longitude, String address,
-			String url) {
-		super(name, latitude, longitude);
+	public Park(Long id, String name, float latitude, float longitude,
+			String address, String url, String neighbourhood) {
+		super(id, name, latitude, longitude);
 		this.address = address;
 		this.url = url;
+		this.neighbourhood = neighbourhood;
 	}
 
 	public String getAddress() {
@@ -36,6 +40,14 @@ public class Park extends Place implements Serializable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getNeighbourhood() {
+		return neighbourhood;
+	}
+
+	public void setNeighbourhood(String neighbourhood) {
+		this.neighbourhood = neighbourhood;
 	}
 
 }
