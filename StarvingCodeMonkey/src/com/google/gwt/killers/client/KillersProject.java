@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.google.gwt.killers.entity.Park;
 import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.core.client.EntryPoint;
@@ -66,7 +65,8 @@ public class KillersProject implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
-	private final RestaurantServiceAsync restaurantService = GWT.create(RestaurantService.class);
+	private final RestaurantServiceAsync restaurantService = GWT
+			.create(RestaurantService.class);
 
 	private List<Park> parkList = new ArrayList<Park>();
 
@@ -237,23 +237,6 @@ public class KillersProject implements EntryPoint {
 		// });
 		// }
 		// }
-
-		MapOptions options = MapOptions.create();
-		options.setCenter(LatLng.create(49.195944, 123.1775715));
-		options.setZoom(10);
-		options.setMapTypeId(MapTypeId.ROADMAP);
-		options.setDraggable(true);
-		options.setMapTypeControl(true);
-		options.setScaleControl(true);
-		options.setScrollwheel(true);
-
-		SimplePanel widg = new SimplePanel();
-
-		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-
-		mapPanel.add(widg);
-		// Associate the Map panel with the HTML host page.
-		RootPanel.get("map-canvas").add(mapPanel);
 	}
 
 	private void loadLogin() {
@@ -265,14 +248,14 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void loadAppData() {
-		
+
 		// Listen for mouse events on the Add button.
-	    changeButtonRestaurant.addClickHandler(new ClickHandler() {
-	      public void onClick(ClickEvent event) {
-	        changeRestaurant();
-	      }
-	    });
-	    
+		changeButtonRestaurant.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				changeRestaurant();
+			}
+		});
+
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
@@ -293,6 +276,22 @@ public class KillersProject implements EntryPoint {
 		mainPanel.add(signOutLink);
 		mainPanel.add(changeButtonRestaurant);
 		mainPanel.add(parksFlexTable);
+
+		MapOptions options = MapOptions.create();
+		options.setCenter(LatLng.create(49.195944, 123.1775715));
+		options.setZoom(10);
+		options.setMapTypeId(MapTypeId.ROADMAP);
+		options.setDraggable(true);
+		options.setMapTypeControl(true);
+		options.setScaleControl(true);
+		options.setScrollwheel(true);
+
+		SimplePanel widg = new SimplePanel();
+		widg.setSize("600px", "500px");
+
+		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
+
+		mainPanel.add(widg);
 
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(mainPanel);
@@ -366,7 +365,7 @@ public class KillersProject implements EntryPoint {
 			mainPanel.add(errorLabel);
 		}
 	}
-	
+
 	private void changeRestaurant() {
 		mainPanel.remove(parksFlexTable);
 		
@@ -397,7 +396,7 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 	}
-	
+
 	private void displayRestaurants(List<Restaurant> restaurants) {
 		for (Restaurant restaurant : restaurants) {
 			displayRestaurant(restaurant);
