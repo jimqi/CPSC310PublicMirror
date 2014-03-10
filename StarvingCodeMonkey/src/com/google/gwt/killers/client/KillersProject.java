@@ -1,13 +1,19 @@
 package com.google.gwt.killers.client;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.killers.entity.Park;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -21,6 +27,9 @@ import com.google.maps.gwt.client.GoogleMap;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class KillersProject implements EntryPoint {
+
+	Logger logger = Logger.getLogger("KillersProjectLogger");
+
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
@@ -47,6 +56,8 @@ public class KillersProject implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
+
+	private List<Park> parkList = new ArrayList<Park>();
 
 	/**
 	 * This is the entry point method.
@@ -250,7 +261,7 @@ public class KillersProject implements EntryPoint {
 		// Create table for stock data.
 		parksFlexTable.setText(0, 0, "Name");
 		parksFlexTable.setText(0, 1, "Address");
-		parksFlexTable.setText(0, 2, "Link");
+		parksFlexTable.setText(0, 2, "Neighbourhood");
 
 		// Add styles to elements in the stock list table.
 		parksFlexTable.setCellPadding(6);
@@ -276,6 +287,12 @@ public class KillersProject implements EntryPoint {
 
 			@Override
 			public void onSuccess(List<Park> result) {
+				int size = -1;
+				if (result != null) {
+					size = result.size();
+				}
+				logger.log(Level.INFO, "Number of loaded parks: " + size);
+				parkList = new ArrayList<Park>(result);
 				displayParks(result);
 			}
 		});
@@ -290,9 +307,36 @@ public class KillersProject implements EntryPoint {
 	private void displayPark(final Park obj) {
 		// Add the park to the table.
 		int row = parksFlexTable.getRowCount();
-		parksFlexTable.setText(row, 0, obj.getName());
+		final Long parkId = obj.getId();
+
 		parksFlexTable.setText(row, 1, obj.getAddress());
-		parksFlexTable.setText(row, 2, obj.getUrl());
+		parksFlexTable.setText(row, 2, obj.getNeighbourhood());
+
+		// Add a button to remove this stock from the table.
+		Anchor parkName = new Anchor(obj.getName());
+		parkName.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				Park park = selectPark(parkId);
+				if (park != null) {
+					logger.log(Level.INFO, "Selected park " + park.getName()
+							+ " with lat/lon " + park.getLatitude() + "/"
+							+ park.getLongitude());
+				}
+				else {
+					logger.log(Level.SEVERE, "No park was found");
+				}
+			}
+		});
+		parksFlexTable.setWidget(row, 0, parkName);
+	}
+
+	private Park selectPark(final Long parkId) {
+		for (Park p : parkList) {
+			if (parkId.equals(p.getId())) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	private void handleError(Throwable error) {
