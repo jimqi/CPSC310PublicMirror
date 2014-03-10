@@ -56,10 +56,12 @@ public class RestaurantReader {
 			String address;
 			String status;
 			String vendorType;
+			String id;
 			while ((inputLine = in.readLine()) != null) {
 				// System.out.println(inputLine);
 				String[] values = parser.parseLine(inputLine);
 				if (values.length >= 7) {
+					id = values[0];
 					vendorType = values[1];
 					status = values[2];
 					name = values[3];
@@ -67,7 +69,7 @@ public class RestaurantReader {
 					// TODO parse out the lat/lon
 					lat = 0; // Float.valueOf(values[1]);
 					lon = 100; // Float.valueOf(values[2]);;
-					Restaurant p = new Restaurant(name, status, vendorType, address, lat, lon);
+					Restaurant p = new Restaurant(id, name, status, vendorType, address, lat, lon);
 					restaurants.add(p);
 				} else {
 					System.err
