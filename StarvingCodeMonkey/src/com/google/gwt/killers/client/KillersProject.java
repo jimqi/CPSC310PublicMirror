@@ -9,6 +9,7 @@ import com.google.gwt.killers.entity.Park;
 import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
@@ -41,6 +43,8 @@ public class KillersProject implements EntryPoint {
 			+ "connection and try again.";
 
 	private VerticalPanel mainPanel = new VerticalPanel();
+	
+	private TabLayoutPanel p = new TabLayoutPanel(1.5, Unit.EM);
 
 	private VerticalPanel mapPanel = new VerticalPanel();
 
@@ -52,6 +56,7 @@ public class KillersProject implements EntryPoint {
 			"Please login to the applicattion using your Google Account.");
 
 	private FlexTable parksFlexTable = new FlexTable();
+	private FlexTable restaurantFlexTable = new FlexTable();
 	private Button changeButtonRestaurant = new Button("Add");
 
 	/**
@@ -363,8 +368,20 @@ public class KillersProject implements EntryPoint {
 	}
 	
 	private void changeRestaurant() {
+		mainPanel.remove(parksFlexTable);
+		
+		// Create table for stock data.
+		parksFlexTable.setText(0, 0, "Name");
 		parksFlexTable.setText(0, 1, "Status");
 		parksFlexTable.setText(0, 2, "Address");
+
+		// Add styles to elements in the stock list table.
+		parksFlexTable.setCellPadding(6);
+
+		// Add styles to elements in the stock list table.
+		parksFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
+		parksFlexTable.addStyleName("watchList");
+		mainPanel.add(parksFlexTable);
 		loadRestaurants();
 	}
 
