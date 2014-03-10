@@ -23,11 +23,13 @@ import com.google.gwt.killers.entity.Restaurant;
 public class RestaurantReader {
 
 	Logger logger = Logger.getLogger("RestaurantReaderLogger");
-	
-//	private static final String Restaurant_DATA_URL = "ftp://webftp.vancouver.ca/OpenData/xls/new_food_vendor_locations.xls";
 
-	private static final String Restaurant_DATA_FILENAME = "WEB-INF" + File.separator
-			+ "data" + File.separator + "new_food_vendor_locations.csv";
+	// private static final String Restaurant_DATA_URL =
+	// "ftp://webftp.vancouver.ca/OpenData/xls/new_food_vendor_locations.xls";
+
+	private static final String Restaurant_DATA_FILENAME = "WEB-INF"
+			+ File.separator + "data" + File.separator
+			+ "new_food_vendor_locations.csv";
 
 	public RestaurantReader() {
 		// TODO Auto-generated constructor stub
@@ -67,7 +69,8 @@ public class RestaurantReader {
 					// TODO parse out the lat/lon
 					lat = 0; // Float.valueOf(values[1]);
 					lon = 100; // Float.valueOf(values[2]);;
-					Restaurant p = new Restaurant(name, status, vendorType, address, lat, lon);
+					Restaurant p = new Restaurant(inputLine, name, status,
+							vendorType, address, lat, lon);
 					restaurants.add(p);
 				} else {
 					System.err
