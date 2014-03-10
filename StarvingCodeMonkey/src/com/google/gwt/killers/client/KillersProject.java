@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.google.gwt.killers.entity.Park;
 import com.google.gwt.killers.entity.Restaurant;
+import com.google.gwt.killers.entity.UserLocation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -17,10 +18,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.LatLng;
@@ -56,6 +59,11 @@ public class KillersProject implements EntryPoint {
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
 
+	private HorizontalPanel BoxPanel = new HorizontalPanel();
+	private TextBox userNumTextBox = new TextBox();
+	private TextBox userRdTextBox = new TextBox();
+	private Button searchUser = new Button("search");
+	
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
@@ -83,6 +91,7 @@ public class KillersProject implements EntryPoint {
 					public void onSuccess(LoginInfo result) {
 						loginInfo = result;
 						if (loginInfo.isLoggedIn()) {
+							loadBoxes();
 							loadAppData();
 						} else {
 							loadLogin();
@@ -245,6 +254,29 @@ public class KillersProject implements EntryPoint {
 		RootPanel.get("content-window").add(loginPanel);
 	}
 
+	
+	UserLocation ul;
+	private void loadBoxes(){
+		// text boxes for user location
+		BoxPanel.add(userNumTextBox);
+		BoxPanel.add(userRdTextBox);
+		BoxPanel.add(searchUser);
+		RootPanel.get("box-window").add(BoxPanel);
+		userNumTextBox.setFocus(true);
+		userRdTextBox.setFocus(true);
+
+		// listen for mouse click on search key (to find user location)
+		searchUser.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				final String num = userNumTextBox.getText().trim();
+				userNumTextBox.setFocus(true);
+				final String rd = userRdTextBox.getText();
+				userRdTextBox.setFocus(true);
+				ul = new UserLocation(num, rd);
+			}
+		});
+	}
+	
 	private void loadAppData() {
 		// Assemble Main panel.
 		//mainPanel.add(signOutLink);
