@@ -13,6 +13,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -30,8 +32,7 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.GoogleMap;
 
-import com.google.gwt.maps.client.overlay.Marker;
-
+//import com.google.gwt.maps.client.overlay.Marker;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -61,15 +62,18 @@ public class KillersProject implements EntryPoint {
 
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
+	private FlexTable favoriteRestaurantTable = new FlexTable();
 
 	private HorizontalPanel BoxPanel = new HorizontalPanel();
 	private TextBox userNumTextBox = new TextBox();
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
-	
+	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+
 	// marker on the map
-	Marker m = new Marker(com.google.gwt.maps.client.geom.LatLng.newInstance(0.0, 0.0));
-	
+	// Marker m = new
+	// Marker(com.google.gwt.maps.client.geom.LatLng.newInstance(0.0, 0.0));
+
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
@@ -260,9 +264,9 @@ public class KillersProject implements EntryPoint {
 		RootPanel.get("content-window").add(loginPanel);
 	}
 
-	
 	UserLocation ul;
-	private void loadBoxes(){
+
+	private void loadBoxes() {
 		// text boxes for user location
 		BoxPanel.add(userNumTextBox);
 		BoxPanel.add(userRdTextBox);
@@ -282,12 +286,13 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 	}
-	
+
 	private void loadAppData() {
 		// Assemble Main panel.
-		//mainPanel.add(signOutLink);
+		// mainPanel.add(signOutLink);
 		mainPanel.add(restaurantFlexTable, "Restaurants");
 		mainPanel.add(parksFlexTable, "Parks");
+		mainPanel.add(favoriteRestaurantTable, "Favorite Restaurant");
 
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
@@ -296,20 +301,54 @@ public class KillersProject implements EntryPoint {
 		parksFlexTable.setText(0, 0, "Name");
 		parksFlexTable.setText(0, 1, "Address");
 		parksFlexTable.setText(0, 2, "Neighbourhood");
-		
+
 		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Name");
 		restaurantFlexTable.setText(0, 1, "Status");
 		restaurantFlexTable.setText(0, 2, "Address");
 		restaurantFlexTable.setText(0, 3, "Food");
+		restaurantFlexTable.setText(0, 4, "Add Favorite");
+
+		// Create table for favorite restuarant data.
+		favoriteRestaurantTable.setText(0, 0, "Name");
+		favoriteRestaurantTable.setText(0, 1, "Status");
+		favoriteRestaurantTable.setText(0, 2, "Address");
+		favoriteRestaurantTable.setText(0, 3, "Food");
+		favoriteRestaurantTable.setText(0, 4, "Remove Favorite");
 
 		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
 		parksFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
 		parksFlexTable.addStyleName("watchList");
 		restaurantFlexTable.setCellPadding(6);
-		restaurantFlexTable.getRowFormatter().addStyleName(0, "watchListHeader");
+		restaurantFlexTable.getRowFormatter()
+				.addStyleName(0, "watchListHeader");
 		restaurantFlexTable.addStyleName("watchList");
+		favoriteRestaurantTable.setCellPadding(6);
+		favoriteRestaurantTable.getRowFormatter().addStyleName(0,
+				"watchListHeader");
+		favoriteRestaurantTable.addStyleName("watchList");
+		mainPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+			// @Override
+			// public void onClick(ClickEvent event) {
+			// loadFavoriteRestaurant();
+			//
+			// }
+
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				if (event.getSelectedItem() == 2) {
+					int numOfRow = favoriteRestaurantTable.getRowCount();
+					for(int i=1;i<numOfRow;i++){
+						favoriteRestaurantTable.removeRow(1);
+					}
+					loadFavoriteRestaurant();
+				}
+
+			}
+		});
+
 		loadParks();
 		loadRestaurants();
 
@@ -332,6 +371,60 @@ public class KillersProject implements EntryPoint {
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(mainPanel);
 	}
+
+	private void loadFavoriteRestaurant() {
+		int row = 1;
+
+		for (final Restaurant obj : restaurants) {
+			favoriteRestaurantTable.setText(row, 0, obj.getName());
+			favoriteRestaurantTable.setText(row, 1, obj.getstatus());
+			favoriteRestaurantTable.setText(row, 2, obj.getAddress());
+			favoriteRestaurantTable.setText(row, 3, obj.getFood());
+			obj.setRow(row);
+			Button removeFavorite = new Button();
+			removeFavorite.setText("remove favorite");
+			removeFavorite.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeFromFavoriteList(obj);
+					refreshindex();
+				}
+
+			});
+			favoriteRestaurantTable.setWidget(row, 4, removeFavorite);
+			row++;
+		}
+	}
+	
+	private void refreshindex(){
+		int row =1;
+		for(Restaurant res : restaurants){
+			res.setRow(row);
+			row++;
+		}
+	}
+	
+	private void removeFromFavoriteList(Restaurant obj){
+		
+		Restaurant target = null;
+		
+		for(Restaurant res: restaurants){
+			if(res.getId().equalsIgnoreCase(obj.getId())){
+				target = res;
+			}
+		}
+		if(target!=null){
+			restaurants.remove(target);
+		}
+		//loadFavoriteRestaurant();
+		//favoriteRestaurantTable.removeRow(1);
+		//loadFavoriteRestaurant();
+		favoriteRestaurantTable.removeRow(obj.getRow());
+		
+	}
+	
+	
 
 	private void loadParks() {
 		parkService.getParks(new AsyncCallback<List<Park>>() {
@@ -421,6 +514,23 @@ public class KillersProject implements EntryPoint {
 		}
 	}
 
+	private void addtoFavoriteList(Restaurant obj) {
+		if(restaurants.size()==0){
+			restaurants.add(obj);
+		}
+		else{
+			for(Restaurant res : restaurants){
+				if(res.getId().equalsIgnoreCase(obj.getId())){
+					return;
+				}
+			}
+			restaurants.add(obj);
+		}
+		
+		//restaurants.add(obj);
+		
+	}
+
 	private void displayRestaurant(final Restaurant obj) {
 		// Add the park to the table.
 		int row = restaurantFlexTable.getRowCount();
@@ -428,5 +538,25 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setText(row, 1, obj.getstatus());
 		restaurantFlexTable.setText(row, 2, obj.getAddress());
 		restaurantFlexTable.setText(row, 3, obj.getFood());
+		Button addFavorite = new Button();
+		addFavorite.setText("add to favorite");
+		addFavorite.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addtoFavoriteList(obj);
+
+			}
+
+		});
+		// closeButton.addClickHandler(new ClickHandler() {
+		// public void onClick(ClickEvent event) {
+		// dialogBox.hide();
+		// sendButton.setEnabled(true);
+		// sendButton.setFocus(true);
+		// }
+		// });
+		// restaurantFlexTable.setText(addFavorite);
+		restaurantFlexTable.setWidget(row, 4, addFavorite);
 	}
 }

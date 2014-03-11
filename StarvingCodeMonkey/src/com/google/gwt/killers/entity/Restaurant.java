@@ -13,6 +13,7 @@ public class Restaurant extends Place implements Serializable {
 	private String vendorType;
 	private String Address;
 	private String food;
+	private int row;
 	
 	public Restaurant() {
 		this.status = "status";
@@ -41,7 +42,15 @@ public class Restaurant extends Place implements Serializable {
 	public String getvendorType() {
 		return vendorType;
 	}
-
+	
+	public void setRow(int row){
+		this.row = row;
+	}
+	
+	public int getRow(){
+		return this.row;
+	}
+	
 	public void setVendorType(String vendorType) {
 		this.vendorType = vendorType;
 	}
