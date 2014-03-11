@@ -35,7 +35,12 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MarkerImage;
 import com.google.maps.gwt.client.MarkerOptions;
+import com.google.maps.gwt.client.Point;
+import com.google.maps.gwt.client.Polyline;
+import com.google.maps.gwt.client.PolylineOptions;
+import com.google.maps.gwt.client.Size;
 
 //import com.google.gwt.maps.client.overlay.Marker;
 
@@ -77,6 +82,8 @@ public class KillersProject implements EntryPoint {
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
 
 	private GoogleMap map;
+	private List<Marker> markers = new ArrayList<Marker>();
+	private List<Polyline> polylines = new ArrayList<Polyline>();
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -482,7 +489,10 @@ public class KillersProject implements EntryPoint {
 					logger.log(Level.INFO, "Selected park " + park.getName()
 							+ " with lat/lon " + park.getLatitude() + "/"
 							+ park.getLongitude());
+					deleteOverlays();
 					addParkMarker(park);
+					addUserMarker();
+					addPathBetweenMarkers();
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
 				}
@@ -503,11 +513,59 @@ public class KillersProject implements EntryPoint {
 	private void addParkMarker(final Park p) {
 		LatLng location = LatLng.create(p.getLatitude(), p.getLongitude());
 		map.panTo(location);
+		map.setZoom(13.0);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
 		Marker marker = Marker.create(markerOpts);
 		marker.setTitle(p.getName());
+		markers.add(marker);
+	}
+
+	private void addUserMarker() {
+		// TODO Need to get the actual user location.
+		// For now, we use dummy data
+		double dummyLatitude = 49.223790;
+		double dummyLongitude = -123.148965;
+
+		LatLng location = LatLng.create(dummyLatitude, dummyLongitude);
+		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setPosition(location);
+		markerOpts.setMap(map);
+		Marker marker = Marker.create(markerOpts);
+		marker.setTitle("User's Current Location");
+		markers.add(marker);
+	}
+
+	private void deleteOverlays() {
+		if (markers != null) {
+			for (Marker marker : markers) {
+				marker.setMap((GoogleMap) null);
+			}
+			markers.clear();
+		}
+
+		if (polylines != null) {
+			for (Polyline polyline : polylines) {
+				polyline.setMap((GoogleMap) null);
+			}
+			polylines.clear();
+		}
+	}
+
+	private void addPathBetweenMarkers() {
+		PolylineOptions polyOpts = PolylineOptions.create();
+		polyOpts.setStrokeColor("#0000FF");
+		polyOpts.setStrokeOpacity(1.0);
+		polyOpts.setStrokeWeight(3);
+
+		Polyline poly = Polyline.create(polyOpts);
+		poly.setMap(map);
+
+		for (Marker m : markers) {
+			poly.getPath().push(m.getPosition());
+		}
+		polylines.add(poly);
 	}
 
 	private void handleError(Throwable error) {
