@@ -23,15 +23,19 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.maps.gwt.client.MapOptions;
-import com.google.maps.gwt.client.LatLng;
-import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.LatLng;
+import com.google.maps.gwt.client.MapOptions;
+import com.google.maps.gwt.client.MapTypeId;
+import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MarkerOptions;
 
 //import com.google.gwt.maps.client.overlay.Marker;
 
@@ -51,7 +55,9 @@ public class KillersProject implements EntryPoint {
 			+ "connection and try again.";
 
 	private VerticalPanel logoutPanel = new VerticalPanel();
+
 	private TabPanel mainPanel = new TabPanel();
+	// private TabLayoutPanel mainPanel = new TabLayoutPanel(2, Unit.EM);
 
 	private Anchor signInLink = new Anchor("Login");
 	private Anchor signOutLink = new Anchor("Logout");
@@ -69,6 +75,8 @@ public class KillersProject implements EntryPoint {
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+
+	private GoogleMap map;
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -292,8 +300,9 @@ public class KillersProject implements EntryPoint {
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		logoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		logoutPanel.add(signOutLink);
-		logoutPanel.setSpacing(5);
+		logoutPanel.setSpacing(15);
 
 		// Create table for park data.
 		parksFlexTable.setText(0, 0, "Name");
@@ -350,25 +359,32 @@ public class KillersProject implements EntryPoint {
 		loadParks();
 		loadRestaurants();
 
-		// MapOptions options = MapOptions.create();
-		// options.setCenter(LatLng.create(49.195944, 123.1775715));
-		// options.setZoom(10);
-		// options.setMapTypeId(MapTypeId.ROADMAP);
-		// options.setDraggable(true);
-		// options.setMapTypeControl(true);
-		// options.setScaleControl(true);
-		// options.setScrollwheel(true);
-		//
-		SimplePanel widg = new SimplePanel();
-		widg.setSize("600px", "500px");
-		//
-		// GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-		//
-		mainPanel.add(widg, "Map View");
-		//
-		// // Associate the Main panel with the HTML host page.
+		mainPanel.selectTab(0);
+
+		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(logoutPanel);
 		RootPanel.get("content-window").add(mainPanel);
+
+		buildMapUi();
+	}
+
+	private void buildMapUi() {
+		// TODO add a map
+		SimplePanel widg = new SimplePanel();
+		widg.setSize("600px", "800px");
+		mainPanel.add(widg, "Map View");
+
+		LatLng myLatLng = LatLng.create(49.255944, -123.1205715);
+		MapOptions myOptions = MapOptions.create();
+		myOptions.setCenter(myLatLng);
+		myOptions.setZoom(11);
+		myOptions.setMapTypeId(MapTypeId.ROADMAP);
+		myOptions.setDraggable(true);
+		myOptions.setMapTypeControl(true);
+		myOptions.setScaleControl(true);
+		myOptions.setScrollwheel(true);
+
+		map = GoogleMap.create(widg.getElement(), myOptions);
 	}
 
 	private void loadFavoriteRestaurant() {
@@ -465,6 +481,7 @@ public class KillersProject implements EntryPoint {
 					logger.log(Level.INFO, "Selected park " + park.getName()
 							+ " with lat/lon " + park.getLatitude() + "/"
 							+ park.getLongitude());
+					addParkMarker(park);
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
 				}
@@ -480,6 +497,16 @@ public class KillersProject implements EntryPoint {
 			}
 		}
 		return null;
+	}
+
+	private void addParkMarker(final Park p) {
+		LatLng location = LatLng.create(p.getLatitude(), p.getLongitude());
+		map.panTo(location);
+		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setPosition(location);
+		markerOpts.setMap(map);
+		Marker marker = Marker.create(markerOpts);
+		marker.setTitle(p.getName());
 	}
 
 	private void handleError(Throwable error) {
