@@ -352,23 +352,23 @@ public class KillersProject implements EntryPoint {
 		loadParks();
 		loadRestaurants();
 
-		MapOptions options = MapOptions.create();
-		options.setCenter(LatLng.create(49.195944, 123.1775715));
-		options.setZoom(10);
-		options.setMapTypeId(MapTypeId.ROADMAP);
-		options.setDraggable(true);
-		options.setMapTypeControl(true);
-		options.setScaleControl(true);
-		options.setScrollwheel(true);
-
+//		MapOptions options = MapOptions.create();
+//		options.setCenter(LatLng.create(49.195944, 123.1775715));
+//		options.setZoom(10);
+//		options.setMapTypeId(MapTypeId.ROADMAP);
+//		options.setDraggable(true);
+//		options.setMapTypeControl(true);
+//		options.setScaleControl(true);
+//		options.setScrollwheel(true);
+//
 		SimplePanel widg = new SimplePanel();
 		widg.setSize("600px", "500px");
-
-		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-
+//
+//		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
+//
 		mainPanel.add(widg, "Logging");
-
-		// Associate the Main panel with the HTML host page.
+//
+//		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(mainPanel);
 	}
 
