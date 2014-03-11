@@ -20,6 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -49,9 +50,8 @@ public class KillersProject implements EntryPoint {
 			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
 
+	private VerticalPanel logoutPanel = new VerticalPanel();
 	private TabPanel mainPanel = new TabPanel();
-
-	private VerticalPanel mapPanel = new VerticalPanel();
 
 	private Anchor signInLink = new Anchor("Login");
 	private Anchor signOutLink = new Anchor("Logout");
@@ -69,10 +69,6 @@ public class KillersProject implements EntryPoint {
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
-
-	// marker on the map
-	// Marker m = new
-	// Marker(com.google.gwt.maps.client.geom.LatLng.newInstance(0.0, 0.0));
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -289,13 +285,15 @@ public class KillersProject implements EntryPoint {
 
 	private void loadAppData() {
 		// Assemble Main panel.
-		// mainPanel.add(signOutLink);
-		mainPanel.add(restaurantFlexTable, "Restaurants");
 		mainPanel.add(parksFlexTable, "Parks");
+		mainPanel.add(restaurantFlexTable, "Restaurants");
 		mainPanel.add(favoriteRestaurantTable, "Favorite Restaurant");
 
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
+		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		logoutPanel.add(signOutLink);
+		logoutPanel.setSpacing(5);
 
 		// Create table for park data.
 		parksFlexTable.setText(0, 0, "Name");
@@ -340,7 +338,7 @@ public class KillersProject implements EntryPoint {
 			public void onSelection(SelectionEvent<Integer> event) {
 				if (event.getSelectedItem() == 2) {
 					int numOfRow = favoriteRestaurantTable.getRowCount();
-					for(int i=1;i<numOfRow;i++){
+					for (int i = 1; i < numOfRow; i++) {
 						favoriteRestaurantTable.removeRow(1);
 					}
 					loadFavoriteRestaurant();
@@ -352,23 +350,24 @@ public class KillersProject implements EntryPoint {
 		loadParks();
 		loadRestaurants();
 
-//		MapOptions options = MapOptions.create();
-//		options.setCenter(LatLng.create(49.195944, 123.1775715));
-//		options.setZoom(10);
-//		options.setMapTypeId(MapTypeId.ROADMAP);
-//		options.setDraggable(true);
-//		options.setMapTypeControl(true);
-//		options.setScaleControl(true);
-//		options.setScrollwheel(true);
-//
+		// MapOptions options = MapOptions.create();
+		// options.setCenter(LatLng.create(49.195944, 123.1775715));
+		// options.setZoom(10);
+		// options.setMapTypeId(MapTypeId.ROADMAP);
+		// options.setDraggable(true);
+		// options.setMapTypeControl(true);
+		// options.setScaleControl(true);
+		// options.setScrollwheel(true);
+		//
 		SimplePanel widg = new SimplePanel();
 		widg.setSize("600px", "500px");
-//
-//		GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
-//
-		mainPanel.add(widg, "Logging");
-//
-//		// Associate the Main panel with the HTML host page.
+		//
+		// GoogleMap theMap = GoogleMap.create(widg.getElement(), options);
+		//
+		mainPanel.add(widg, "Map View");
+		//
+		// // Associate the Main panel with the HTML host page.
+		RootPanel.get("content-window").add(logoutPanel);
 		RootPanel.get("content-window").add(mainPanel);
 	}
 
@@ -396,35 +395,33 @@ public class KillersProject implements EntryPoint {
 			row++;
 		}
 	}
-	
-	private void refreshindex(){
-		int row =1;
-		for(Restaurant res : restaurants){
+
+	private void refreshindex() {
+		int row = 1;
+		for (Restaurant res : restaurants) {
 			res.setRow(row);
 			row++;
 		}
 	}
-	
-	private void removeFromFavoriteList(Restaurant obj){
-		
+
+	private void removeFromFavoriteList(Restaurant obj) {
+
 		Restaurant target = null;
-		
-		for(Restaurant res: restaurants){
-			if(res.getId().equalsIgnoreCase(obj.getId())){
+
+		for (Restaurant res : restaurants) {
+			if (res.getId().equalsIgnoreCase(obj.getId())) {
 				target = res;
 			}
 		}
-		if(target!=null){
+		if (target != null) {
 			restaurants.remove(target);
 		}
-		//loadFavoriteRestaurant();
-		//favoriteRestaurantTable.removeRow(1);
-		//loadFavoriteRestaurant();
+		// loadFavoriteRestaurant();
+		// favoriteRestaurantTable.removeRow(1);
+		// loadFavoriteRestaurant();
 		favoriteRestaurantTable.removeRow(obj.getRow());
-		
+
 	}
-	
-	
 
 	private void loadParks() {
 		parkService.getParks(new AsyncCallback<List<Park>>() {
@@ -515,20 +512,19 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void addtoFavoriteList(Restaurant obj) {
-		if(restaurants.size()==0){
+		if (restaurants.size() == 0) {
 			restaurants.add(obj);
-		}
-		else{
-			for(Restaurant res : restaurants){
-				if(res.getId().equalsIgnoreCase(obj.getId())){
+		} else {
+			for (Restaurant res : restaurants) {
+				if (res.getId().equalsIgnoreCase(obj.getId())) {
 					return;
 				}
 			}
 			restaurants.add(obj);
 		}
-		
-		//restaurants.add(obj);
-		
+
+		// restaurants.add(obj);
+
 	}
 
 	private void displayRestaurant(final Restaurant obj) {
