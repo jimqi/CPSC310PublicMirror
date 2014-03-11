@@ -96,6 +96,7 @@ public class KillersProject implements EntryPoint {
 			.create(RestaurantService.class);
 
 	private List<Park> parkList = new ArrayList<Park>();
+	private List<Restaurant> restaurantList = new ArrayList<Restaurant>();
 
 	/**
 	 * This is the entry point method.
@@ -585,6 +586,12 @@ public class KillersProject implements EntryPoint {
 
 			@Override
 			public void onSuccess(List<Restaurant> result) {
+				int size = -1;
+				if (result != null) {
+					size = result.size();
+				}
+				logger.log(Level.INFO, "Number of loaded parks: " + size);
+				restaurantList = new ArrayList<Restaurant>(result);
 				displayRestaurants(result);
 			}
 		});
@@ -613,12 +620,32 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void displayRestaurant(final Restaurant obj) {
-		// Add the park to the table.
 		int row = restaurantFlexTable.getRowCount();
+		final String restaurantId = obj.getId();
+		
+		// Add the park to the table.
+		row = restaurantFlexTable.getRowCount();
 		restaurantFlexTable.setText(row, 0, obj.getName());
 		restaurantFlexTable.setText(row, 1, obj.getstatus());
 		restaurantFlexTable.setText(row, 2, obj.getAddress());
 		restaurantFlexTable.setText(row, 3, obj.getFood());
+		
+		Anchor parkName = new Anchor(obj.getName());
+		parkName.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				Restaurant restaurant = selectRestaurant(restaurantId);
+				if (restaurant != null) {
+					logger.log(Level.INFO, "Selected restaurant " + restaurant.getName()
+							+ " with lat/lon " + restaurant.getLatitude() + "/"
+							+ restaurant.getLongitude());
+					addRestaurantMarker(restaurant);
+				} else {
+					logger.log(Level.SEVERE, "No restaurant was found");
+				}
+			}
+		});
+		restaurantFlexTable.setWidget(row, 0, parkName);
+		
 		Button addFavorite = new Button();
 		addFavorite.setText("add to favorite");
 		addFavorite.addClickHandler(new ClickHandler() {
@@ -639,5 +666,24 @@ public class KillersProject implements EntryPoint {
 		// });
 		// restaurantFlexTable.setText(addFavorite);
 		restaurantFlexTable.setWidget(row, 4, addFavorite);
+	}
+	
+	private Restaurant selectRestaurant(final String restaurantId) {
+		for (Restaurant r : restaurantList) {
+			if (restaurantId.equals(r.getId())) {
+				return r;
+			}
+		}
+		return null;
+	}
+
+	private void addRestaurantMarker(final Restaurant r) {
+		LatLng location = LatLng.create(r.getLatitude(), r.getLongitude());
+		map.panTo(location);
+		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setPosition(location);
+		markerOpts.setMap(map);
+		Marker marker = Marker.create(markerOpts);
+		marker.setTitle(r.getName());
 	}
 }
