@@ -70,10 +70,9 @@ public class RestaurantReader {
 					name = values[3];
 					address = values[4];
 					food = values[5];
-					// String slat = values[6];
-					// String slon = values[7];
-					lat = 0; //Float.valueOf(slat);
-					lon = 100; //Float.valueOf(slon);
+					// lat is at values[6] lon at values[7]
+					lat = 5;
+					lon = 5;
 					Restaurant p = new Restaurant(id, name, status, vendorType, address, lat, lon, food);
 					restaurants.add(p);
 				} else {
