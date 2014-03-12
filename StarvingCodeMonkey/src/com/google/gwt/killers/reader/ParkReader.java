@@ -24,7 +24,7 @@ public class ParkReader {
 
 	Logger logger = Logger.getLogger("ParkReaderLogger");
 
-	private static final String PARK_DATA_URL = "ftp://webftp.vancouver.ca/OpenData/csv/parks.csv";
+	private static final String PARK_DATA_URL = "https://dl.dropboxusercontent.com/u/69390696/parks.csv";
 
 	private static final String PARK_DATA_FILENAME = "WEB-INF" + File.separator
 			+ "data" + File.separator + "parks.csv";
@@ -36,14 +36,14 @@ public class ParkReader {
 	public List<Park> loadData() {
 		List<Park> parks = new ArrayList<Park>();
 		try {
-			// URL dataUrl = new URL(PARK_DATA_URL);
-			// URLConnection conn = dataUrl.openConnection();
+			URL dataUrl = new URL(PARK_DATA_URL);
+			URLConnection conn = dataUrl.openConnection();
 
-			// BufferedReader in = new BufferedReader(new InputStreamReader(
-			// conn.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					conn.getInputStream()));
 
-			BufferedReader in = new BufferedReader(new FileReader(
-					PARK_DATA_FILENAME));
+			// / BufferedReader in = new BufferedReader(new FileReader(
+			// PARK_DATA_FILENAME));
 			CSVParser parser = new CSVParser();
 
 			// We ignore the first line, which has not park data

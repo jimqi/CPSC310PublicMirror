@@ -24,8 +24,7 @@ public class RestaurantReader {
 
 	Logger logger = Logger.getLogger("RestaurantReaderLogger");
 
-	// private static final String Restaurant_DATA_URL =
-	// "ftp://webftp.vancouver.ca/OpenData/xls/new_food_vendor_locations.xls";
+	private static final String Restaurant_DATA_URL = "https://dl.dropboxusercontent.com/u/69390696/new_food_vendor_locations.csv";
 
 	private static final String Restaurant_DATA_FILENAME = "WEB-INF"
 			+ File.separator + "data" + File.separator
@@ -38,14 +37,14 @@ public class RestaurantReader {
 	public List<Restaurant> loadData() {
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		try {
-			// URL dataUrl = new URL(Restaurant_DATA_URL);
-			// URLConnection conn = dataUrl.openConnection();
+			URL dataUrl = new URL(Restaurant_DATA_URL);
+			URLConnection conn = dataUrl.openConnection();
 
-			// BufferedReader in = new BufferedReader(new InputStreamReader(
-			// conn.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					conn.getInputStream()));
 
-			BufferedReader in = new BufferedReader(new FileReader(
-					Restaurant_DATA_FILENAME));
+			// BufferedReader in = new BufferedReader(new FileReader(
+			// Restaurant_DATA_FILENAME));
 			CSVParser parser = new CSVParser();
 
 			// We ignore the first line, which has no restaurant data
@@ -73,7 +72,8 @@ public class RestaurantReader {
 					// lat is at values[6] lon at values[7]
 					lat = 5;
 					lon = 5;
-					Restaurant p = new Restaurant(id, name, status, vendorType, address, lat, lon, food);
+					Restaurant p = new Restaurant(id, name, status, vendorType,
+							address, lat, lon, food);
 					restaurants.add(p);
 				} else {
 					System.err
