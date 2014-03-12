@@ -279,6 +279,9 @@ public class KillersProject implements EntryPoint {
 	UserLocation ul;
 
 	private void loadBoxes() {
+		
+		
+		
 		// text boxes for user location
 		BoxPanel.add(userNumTextBox);
 		BoxPanel.add(userRdTextBox);
@@ -297,6 +300,7 @@ public class KillersProject implements EntryPoint {
 				userRdTextBox.setFocus(true);
 				ul = new UserLocation(num, rd);
 				logger.log(Level.INFO, "LatLong" + ul.getLat() + "," + ul.getLong());
+	
 			}
 		});
 	}
@@ -494,6 +498,7 @@ public class KillersProject implements EntryPoint {
 					deleteOverlays();
 					addParkMarker(park);
 					addUserMarker();
+					addUserMarker(ul.getLat(), ul.getLong());
 					addPathBetweenMarkers();
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
@@ -539,6 +544,16 @@ public class KillersProject implements EntryPoint {
 		markers.add(marker);
 	}
 
+	private void addUserMarker(double lattt, double longgg){
+		LatLng location = LatLng.create(lattt, longgg);
+		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setPosition(location);
+		markerOpts.setMap(map);
+		Marker marker = Marker.create(markerOpts);
+		marker.setTitle("User's Current Location");
+		markers.add(marker);
+	}
+	
 	private void deleteOverlays() {
 		if (markers != null) {
 			for (Marker marker : markers) {
