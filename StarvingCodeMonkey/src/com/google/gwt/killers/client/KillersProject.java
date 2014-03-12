@@ -290,11 +290,13 @@ public class KillersProject implements EntryPoint {
 		// listen for mouse click on search key (to find user location)
 		searchUser.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				
 				final String num = userNumTextBox.getText().trim();
 				userNumTextBox.setFocus(true);
 				final String rd = userRdTextBox.getText();
 				userRdTextBox.setFocus(true);
 				ul = new UserLocation(num, rd);
+				logger.log(Level.INFO, "LatLong" + ul.getLat() + "," + ul.getLong());
 			}
 		});
 	}
