@@ -299,8 +299,8 @@ public class KillersProject implements EntryPoint {
 				final String rd = userRdTextBox.getText();
 				userRdTextBox.setFocus(true);
 				ul = new UserLocation(num, rd);
-				logger.log(Level.INFO, "LatLong" + ul.getLat() + "," + ul.getLong());
-	
+				//logger.log(Level.INFO, "LatLong" + " " + ul.getLat() + "," + ul.getLong());
+				
 			}
 		});
 	}
@@ -497,8 +497,10 @@ public class KillersProject implements EntryPoint {
 							+ park.getLongitude());
 					deleteOverlays();
 					addParkMarker(park);
-					addUserMarker();
+					//addUserMarker();
 					addUserMarker(ul.getLat(), ul.getLong());
+					logger.log(Level.INFO, "LatLong" + " " + ul.getLat() + "," + ul.getLong());
+					
 					addPathBetweenMarkers();
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
