@@ -325,7 +325,7 @@ public class KillersProject implements EntryPoint {
 					parkTableSortColumn = 0;
 					parkTableReverseSort = false;
 				}
-				String text = !parkTableReverseSort ? "Name &#9660;"
+				String text = parkTableReverseSort ? "Name &#9660;"
 						: "Name &#9650;";
 				Anchor col = (Anchor) event.getSource();
 				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
@@ -339,10 +339,56 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 
+		Anchor parkNeighbourhood = new Anchor("Neighbourhood");
+		parkNeighbourhood.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (2 == parkTableSortColumn) {
+					parkTableReverseSort = !parkTableReverseSort;
+				} else {
+					parkTableSortColumn = 2;
+					parkTableReverseSort = false;
+				}
+				String text = parkTableReverseSort ? "Neighbourhood &#9660;"
+						: "Neighbourhood &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortParks(parkTableSortColumn, parkTableReverseSort);
+				int rowCount = parksFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					parksFlexTable.removeRow(i);
+				}
+				displayParks(parkList);
+			}
+		});	
+		
+		Anchor parkAddress = new Anchor("Address");
+		parkAddress.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (1 == parkTableSortColumn) {
+					parkTableReverseSort = !parkTableReverseSort;
+				} else {
+					parkTableSortColumn = 1;
+					parkTableReverseSort = false;
+				}
+				String text = parkTableReverseSort ? "Address &#9660;"
+						: "Address &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortParks(parkTableSortColumn, parkTableReverseSort);
+				int rowCount = parksFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					parksFlexTable.removeRow(i);
+				}
+				displayParks(parkList);
+			}
+		});
+		
 		// Create table for park data.
 		parksFlexTable.setWidget(0, 0, parkName);
-		parksFlexTable.setText(0, 1, "Address");
-		parksFlexTable.setText(0, 2, "Neighbourhood");
+		parksFlexTable.setWidget(0, 1, parkAddress);
+		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
 
 		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Name");
@@ -744,6 +790,24 @@ public class KillersProject implements EntryPoint {
 			}
 			break;
 		}
+		case 2: {
+			if (parkTableReverseSort) {
+				Collections.sort(parkList,
+						Collections.reverseOrder(ParkNeighbourhoodComparator));
+			} else {
+				Collections.sort(parkList, ParkNeighbourhoodComparator);
+			}
+			break;
+		}
+		case 1: {
+			if (parkTableReverseSort) {
+				Collections.sort(parkList,
+						Collections.reverseOrder(ParkAddressComparator));
+			} else {
+				Collections.sort(parkList, ParkAddressComparator);
+			}
+			break;
+		}
 		default: {
 			// Nothing to sort
 		}
@@ -760,6 +824,32 @@ public class KillersProject implements EntryPoint {
 				return 1;
 			}
 			return obj1.getName().compareTo(obj2.getName());
+		}
+
+	};
+	public static Comparator<Park> ParkNeighbourhoodComparator = new Comparator<Park>() {
+		public int compare(Park obj1, Park obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getNeighbourhood().compareTo(obj2.getNeighbourhood());
+		}
+
+	};
+	public static Comparator<Park> ParkAddressComparator = new Comparator<Park>() {
+		public int compare(Park obj1, Park obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getAddress().compareTo(obj2.getAddress());
 		}
 
 	};
