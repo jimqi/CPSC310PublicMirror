@@ -1,6 +1,8 @@
 package com.google.gwt.killers.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,7 +12,6 @@ import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.killers.entity.UserLocation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -23,10 +24,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -35,12 +34,9 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
-import com.google.maps.gwt.client.MarkerImage;
 import com.google.maps.gwt.client.MarkerOptions;
-import com.google.maps.gwt.client.Point;
 import com.google.maps.gwt.client.Polyline;
 import com.google.maps.gwt.client.PolylineOptions;
-import com.google.maps.gwt.client.Size;
 
 //import com.google.gwt.maps.client.overlay.Marker;
 
@@ -70,6 +66,9 @@ public class KillersProject implements EntryPoint {
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label(
 			"Please login to the applicattion using your Google Account.");
+
+	private int parkTableSortColumn = 0;
+	private boolean parkTableReverseSort = false;
 
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
@@ -279,9 +278,7 @@ public class KillersProject implements EntryPoint {
 	UserLocation ul;
 
 	private void loadBoxes() {
-		
-		
-		
+
 		// text boxes for user location
 		BoxPanel.add(userNumTextBox);
 		BoxPanel.add(userRdTextBox);
@@ -293,14 +290,15 @@ public class KillersProject implements EntryPoint {
 		// listen for mouse click on search key (to find user location)
 		searchUser.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				
+
 				final String num = userNumTextBox.getText().trim();
 				userNumTextBox.setFocus(true);
 				final String rd = userRdTextBox.getText();
 				userRdTextBox.setFocus(true);
 				ul = new UserLocation(num, rd);
-				//logger.log(Level.INFO, "LatLong" + " " + ul.getLat() + "," + ul.getLong());
-				
+				// logger.log(Level.INFO, "LatLong" + " " + ul.getLat() + "," +
+				// ul.getLong());
+
 			}
 		});
 	}
@@ -318,8 +316,31 @@ public class KillersProject implements EntryPoint {
 		logoutPanel.add(signOutLink);
 		logoutPanel.setSpacing(15);
 
+		Anchor parkName = new Anchor("Name");
+		parkName.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (0 == parkTableSortColumn) {
+					parkTableReverseSort = !parkTableReverseSort;
+				} else {
+					parkTableSortColumn = 0;
+					parkTableReverseSort = false;
+				}
+				String text = !parkTableReverseSort ? "Name &#9660;"
+						: "Name &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortParks(parkTableSortColumn, parkTableReverseSort);
+				int rowCount = parksFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					parksFlexTable.removeRow(i);
+				}
+				displayParks(parkList);
+			}
+		});
+
 		// Create table for park data.
-		parksFlexTable.setText(0, 0, "Name");
+		parksFlexTable.setWidget(0, 0, parkName);
 		parksFlexTable.setText(0, 1, "Address");
 		parksFlexTable.setText(0, 2, "Neighbourhood");
 
@@ -497,11 +518,14 @@ public class KillersProject implements EntryPoint {
 							+ park.getLongitude());
 					deleteOverlays();
 					addParkMarker(park);
-					//addUserMarker();
-					addUserMarker(ul.getLat(), ul.getLong());
-					logger.log(Level.INFO, "LatLong" + " " + ul.getLat() + "," + ul.getLong());
-					
+					addUserMarker();
+					// addUserMarker(ul.getLat(), ul.getLong());
+					// logger.log(Level.INFO, "LatLong" + " " + ul.getLat() +
+					// ","
+					// + ul.getLong());
+
 					addPathBetweenMarkers();
+					mainPanel.selectTab(3);
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
 				}
@@ -522,7 +546,7 @@ public class KillersProject implements EntryPoint {
 	private void addParkMarker(final Park p) {
 		LatLng location = LatLng.create(p.getLatitude(), p.getLongitude());
 		map.panTo(location);
-		map.setZoom(13.0);
+		map.setZoom(11.0);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
@@ -546,7 +570,7 @@ public class KillersProject implements EntryPoint {
 		markers.add(marker);
 	}
 
-	private void addUserMarker(double lattt, double longgg){
+	private void addUserMarker(double lattt, double longgg) {
 		LatLng location = LatLng.create(lattt, longgg);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
@@ -555,7 +579,7 @@ public class KillersProject implements EntryPoint {
 		marker.setTitle("User's Current Location");
 		markers.add(marker);
 	}
-	
+
 	private void deleteOverlays() {
 		if (markers != null) {
 			for (Marker marker : markers) {
@@ -641,22 +665,25 @@ public class KillersProject implements EntryPoint {
 	private void displayRestaurant(final Restaurant obj) {
 		int row = restaurantFlexTable.getRowCount();
 		final String restaurantId = obj.getId();
-		
+
 		// Add the park to the table.
 		row = restaurantFlexTable.getRowCount();
 		restaurantFlexTable.setText(row, 0, obj.getName());
 		restaurantFlexTable.setText(row, 1, obj.getstatus());
 		restaurantFlexTable.setText(row, 2, obj.getAddress());
 		restaurantFlexTable.setText(row, 3, obj.getFood());
-		
+
 		Anchor parkName = new Anchor(obj.getName());
 		parkName.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				Restaurant restaurant = selectRestaurant(restaurantId);
 				if (restaurant != null) {
-					logger.log(Level.INFO, "Selected restaurant " + restaurant.getName()
-							+ " with lat/lon " + restaurant.getLatitude() + "/"
-							+ restaurant.getLongitude());
+					logger.log(
+							Level.INFO,
+							"Selected restaurant " + restaurant.getName()
+									+ " with lat/lon "
+									+ restaurant.getLatitude() + "/"
+									+ restaurant.getLongitude());
 					addRestaurantMarker(restaurant);
 				} else {
 					logger.log(Level.SEVERE, "No restaurant was found");
@@ -664,7 +691,7 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 		restaurantFlexTable.setWidget(row, 0, parkName);
-		
+
 		Button addFavorite = new Button();
 		addFavorite.setText("add to favorite");
 		addFavorite.addClickHandler(new ClickHandler() {
@@ -686,7 +713,7 @@ public class KillersProject implements EntryPoint {
 		// restaurantFlexTable.setText(addFavorite);
 		restaurantFlexTable.setWidget(row, 4, addFavorite);
 	}
-	
+
 	private Restaurant selectRestaurant(final String restaurantId) {
 		for (Restaurant r : restaurantList) {
 			if (restaurantId.equals(r.getId())) {
@@ -705,4 +732,35 @@ public class KillersProject implements EntryPoint {
 		Marker marker = Marker.create(markerOpts);
 		marker.setTitle(r.getName());
 	}
+
+	private void sortParks(int parkTableSortColumn, boolean parkTableReverseSort) {
+		switch (parkTableSortColumn) {
+		case 0: {
+			if (parkTableReverseSort) {
+				Collections.sort(parkList,
+						Collections.reverseOrder(ParkNameComparator));
+			} else {
+				Collections.sort(parkList, ParkNameComparator);
+			}
+			break;
+		}
+		default: {
+			// Nothing to sort
+		}
+		}
+	}
+
+	public static Comparator<Park> ParkNameComparator = new Comparator<Park>() {
+		public int compare(Park obj1, Park obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getName().compareTo(obj2.getName());
+		}
+
+	};
 }
