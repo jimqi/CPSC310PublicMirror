@@ -73,12 +73,15 @@ public class KillersProject implements EntryPoint {
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
 	private FlexTable favoriteRestaurantTable = new FlexTable();
+	private FlexTable favoriteParkTable = new FlexTable();
+
 
 	private HorizontalPanel BoxPanel = new HorizontalPanel();
 	private TextBox userNumTextBox = new TextBox();
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+	private List<Park> parks = new ArrayList<Park>();
 
 	private GoogleMap map;
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -308,6 +311,7 @@ public class KillersProject implements EntryPoint {
 		mainPanel.add(parksFlexTable, "Parks");
 		mainPanel.add(restaurantFlexTable, "Restaurants");
 		mainPanel.add(favoriteRestaurantTable, "Favorite Restaurant");
+		mainPanel.add(favoriteParkTable, "Favorite Park");
 
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
@@ -389,6 +393,8 @@ public class KillersProject implements EntryPoint {
 		parksFlexTable.setWidget(0, 0, parkName);
 		parksFlexTable.setWidget(0, 1, parkAddress);
 		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
+		parksFlexTable.setText(0, 3, "Add Favorite");
+
 
 		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Name");
@@ -403,6 +409,12 @@ public class KillersProject implements EntryPoint {
 		favoriteRestaurantTable.setText(0, 2, "Address");
 		favoriteRestaurantTable.setText(0, 3, "Food");
 		favoriteRestaurantTable.setText(0, 4, "Remove Favorite");
+		
+		// Create table for favorite parks data
+		favoriteParkTable.setText(0, 0, "Name");
+		favoriteParkTable.setText(0, 1, "Address");
+		favoriteParkTable.setText(0, 3, "Neighbourhood");
+		favoriteParkTable.setText(0, 4, "Remove Favorite");
 
 		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
