@@ -71,11 +71,11 @@ public class RestaurantReader {
 					food = values[5];
 					// lat is at values[6] lon at values[7]
 					String slat, slon;
-					if (values[6].length() > 9) {
+					if (values[6].length() >= 9) {
 					slat = values[6].substring(0, 9);
 					}
 					else slat = "0";
-					if (values[7].length() > 9) {
+					if (values[7].length() >= 9) {
 						slon = values[7].substring(0, 9);
 						}
 					else slon = "0";
