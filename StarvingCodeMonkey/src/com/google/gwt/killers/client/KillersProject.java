@@ -85,7 +85,7 @@ public class KillersProject implements EntryPoint {
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
-	// private List<Park> parks = new ArrayList<Park>();
+	private List<Park> parks = new ArrayList<Park>();
 
 	private GoogleMap map;
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -433,7 +433,7 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setText(0, 3, "Food");
 		restaurantFlexTable.setText(0, 4, "Add Favorite");
 
-		// Create table for favorite restuarant data.
+		// Create table for favorite restaurant data.
 		favoriteRestaurantTable.setText(0, 0, "Name");
 		favoriteRestaurantTable.setText(0, 1, "Status");
 		favoriteRestaurantTable.setText(0, 2, "Address");
@@ -443,8 +443,8 @@ public class KillersProject implements EntryPoint {
 		// Create table for favorite parks data
 		favoriteParkTable.setText(0, 0, "Name");
 		favoriteParkTable.setText(0, 1, "Address");
-		favoriteParkTable.setText(0, 3, "Neighbourhood");
-		favoriteParkTable.setText(0, 4, "Remove Favorite");
+		favoriteParkTable.setText(0, 2, "Neighbourhood");
+		favoriteParkTable.setText(0, 3, "Remove Favorite");
 
 		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
@@ -454,10 +454,18 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.getRowFormatter()
 				.addStyleName(0, "watchListHeader");
 		restaurantFlexTable.addStyleName("watchList");
+		
 		favoriteRestaurantTable.setCellPadding(6);
 		favoriteRestaurantTable.getRowFormatter().addStyleName(0,
 				"watchListHeader");
 		favoriteRestaurantTable.addStyleName("watchList");
+		
+		favoriteParkTable.setCellPadding(6);
+		favoriteParkTable.getRowFormatter().addStyleName(0, "watchListHeader");
+		favoriteParkTable.addStyleName("watchList");
+		
+		
+				
 		mainPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
 			// @Override
@@ -469,13 +477,19 @@ public class KillersProject implements EntryPoint {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				if (event.getSelectedItem() == 2) {
-					int numOfRow = favoriteRestaurantTable.getRowCount();
-					for (int i = 1; i < numOfRow; i++) {
+					int numOfFavResRow = favoriteRestaurantTable.getRowCount();
+					for (int i = 1; i < numOfFavResRow; i++) {
 						favoriteRestaurantTable.removeRow(1);
 					}
 					loadFavoriteRestaurant();
 				}
-
+				if (event.getSelectedItem() == 1) {
+					int numOfFavParkRow = favoriteParkTable.getRowCount();
+					for (int i = 1; i < numOfFavParkRow; i++) {
+						favoriteParkTable.removeRow(1);
+					}
+					loadFavoritePark();
+				}
 			}
 		});
 
@@ -535,23 +549,25 @@ public class KillersProject implements EntryPoint {
 			favoriteRestaurantTable.setText(row, 2, obj.getAddress());
 			favoriteRestaurantTable.setText(row, 3, obj.getFood());
 			obj.setRow(row);
-			Button removeFavorite = new Button();
-			removeFavorite.setText("remove favorite");
-			removeFavorite.addClickHandler(new ClickHandler() {
+			Button removeFavoriteRes = new Button();
+			removeFavoriteRes.setText("remove favorite");
+			removeFavoriteRes.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					removeFromFavoriteList(obj);
-					refreshindex();
+					removeFromFavResList(obj);
+					refreshRestaurantIndex();
 				}
 
 			});
-			favoriteRestaurantTable.setWidget(row, 4, removeFavorite);
+			favoriteRestaurantTable.setWidget(row, 4, removeFavoriteRes);
 			row++;
 		}
 	}
+	
+	
 
-	private void refreshindex() {
+	private void refreshRestaurantIndex() {
 		int row = 1;
 		for (Restaurant res : restaurants) {
 			res.setRow(row);
@@ -559,7 +575,7 @@ public class KillersProject implements EntryPoint {
 		}
 	}
 
-	private void removeFromFavoriteList(Restaurant obj) {
+	private void removeFromFavResList(Restaurant obj) {
 
 		Restaurant target = null;
 
@@ -577,6 +593,53 @@ public class KillersProject implements EntryPoint {
 		favoriteRestaurantTable.removeRow(obj.getRow());
 
 	}
+	
+	private void loadFavoritePark() {
+		int row = 1;
+		
+		for (final Park obj : parks) {
+			favoriteParkTable.setText(row, 0, obj.getName());
+			favoriteParkTable.setText(row, 1, obj.getAddress());
+			favoriteParkTable.setText(row, 2, obj.getNeighbourhood());
+			obj.setRow(row);
+			Button removeFavPark = new Button();
+			removeFavPark.setText("remove favorite");
+			removeFavPark.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					removeFromFavParkList(obj);
+					refreshParkIndex();
+				}
+			});
+			favoriteParkTable.setWidget(row, 3, removeFavPark);
+			row++;
+		}
+	}
+	
+	private void removeFromFavParkList(Park obj){
+		Park target = null;
+		
+		for (Park park : parks){
+			if(park.getId().equalsIgnoreCase(obj.getId())){
+				target = park;
+			}
+		}
+		if (target != null) {
+			parks.remove(target);
+		}
+		favoriteParkTable.removeRow(obj.getRow());
+			
+	}
+	
+	private void refreshParkIndex() {
+		int row = 1;
+		for (Park park: parks){
+			park.setRow(row);
+			row++;
+		}
+	}
+	
+	
 
 	private void loadParks() {
 		parkService.getParks(new AsyncCallback<List<Park>>() {
@@ -636,6 +699,16 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 		parksFlexTable.setWidget(row, 0, parkName);
+		
+		Button addFavorite = new Button();
+		addFavorite.setText("add to favorite");
+		addFavorite.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				addToFavoriteParkList(obj);
+			}
+		});
+		parksFlexTable.setWidget(row, 3, addFavorite);
 	}
 
 	private Park selectPark(final String parkId) {
@@ -750,7 +823,7 @@ public class KillersProject implements EntryPoint {
 		}
 	}
 
-	private void addtoFavoriteList(Restaurant obj) {
+	private void addToFavoriteResList(Restaurant obj) {
 		if (restaurants.size() == 0) {
 			restaurants.add(obj);
 		} else {
@@ -764,6 +837,20 @@ public class KillersProject implements EntryPoint {
 
 		// restaurants.add(obj);
 
+	}
+	
+	private void addToFavoriteParkList(Park obj) {
+		if(parks.size() == 0) {
+			parks.add(obj);
+		}
+		else {
+			for (Park park : parks) {
+				if(park.getId().equalsIgnoreCase(obj.getId())) {
+					return;
+				}
+			}
+			parks.add(obj);
+;		}
 	}
 
 	private void displayRestaurant(final Restaurant obj) {
@@ -802,7 +889,7 @@ public class KillersProject implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				addtoFavoriteList(obj);
+				addToFavoriteResList(obj);
 
 			}
 

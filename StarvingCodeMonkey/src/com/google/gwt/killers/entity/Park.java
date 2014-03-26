@@ -11,6 +11,8 @@ public class Park extends Place implements Serializable {
 	private String url;
 
 	private String neighbourhood;
+	
+	public int row;
 
 	public Park() {
 		this.address = "Park address";
@@ -48,6 +50,14 @@ public class Park extends Place implements Serializable {
 
 	public void setNeighbourhood(String neighbourhood) {
 		this.neighbourhood = neighbourhood;
+	}
+	
+	public void setRow(int row){
+		this.row = row;
+	}
+	
+	public int getRow() {
+		return this.row;
 	}
 
 }
