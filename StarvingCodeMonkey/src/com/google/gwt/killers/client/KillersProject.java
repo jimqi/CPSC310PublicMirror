@@ -67,21 +67,25 @@ public class KillersProject implements EntryPoint {
 	private Label loginLabel = new Label(
 			"Please login to the applicattion using your Google Account.");
 
+	private VerticalPanel adminPanel = new VerticalPanel();
+
 	private int parkTableSortColumn = 0;
 	private boolean parkTableReverseSort = false;
+
+	private int restaurantTableSortColumn = 0;
+	private boolean restaurantTableReverseSort = false;
 
 	private FlexTable parksFlexTable = new FlexTable();
 	private FlexTable restaurantFlexTable = new FlexTable();
 	private FlexTable favoriteRestaurantTable = new FlexTable();
 	private FlexTable favoriteParkTable = new FlexTable();
 
-
 	private HorizontalPanel BoxPanel = new HorizontalPanel();
 	private TextBox userNumTextBox = new TextBox();
 	private TextBox userRdTextBox = new TextBox();
 	private Button searchUser = new Button("search");
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
-	private List<Park> parks = new ArrayList<Park>();
+	// private List<Park> parks = new ArrayList<Park>();
 
 	private GoogleMap map;
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -114,7 +118,10 @@ public class KillersProject implements EntryPoint {
 
 					public void onSuccess(LoginInfo result) {
 						loginInfo = result;
-						if (loginInfo.isLoggedIn()) {
+						if (loginInfo.isAdmin() && loginInfo.isLoggedIn()) {
+							logger.info("Administrator logged in.");
+							loadAdminPage();
+						} else if (loginInfo.isLoggedIn()) {
 							loadBoxes();
 							loadAppData();
 						} else {
@@ -364,8 +371,8 @@ public class KillersProject implements EntryPoint {
 				}
 				displayParks(parkList);
 			}
-		});	
-		
+		});
+
 		Anchor parkAddress = new Anchor("Address");
 		parkAddress.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -388,17 +395,40 @@ public class KillersProject implements EntryPoint {
 				displayParks(parkList);
 			}
 		});
-		
+
+		Anchor restaurantStatus = new Anchor("Status");
+		restaurantStatus.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (0 == restaurantTableSortColumn) {
+					restaurantTableReverseSort = !restaurantTableReverseSort;
+				} else {
+					restaurantTableSortColumn = 0;
+					restaurantTableReverseSort = false;
+				}
+				String text = restaurantTableReverseSort ? "Status &#9660;"
+						: "Status &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortRestaurants(restaurantTableSortColumn,
+						restaurantTableReverseSort);
+				int rowCount = restaurantFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					restaurantFlexTable.removeRow(i);
+				}
+				displayRestaurants(restaurantList);
+			}
+		});
+
 		// Create table for park data.
 		parksFlexTable.setWidget(0, 0, parkName);
 		parksFlexTable.setWidget(0, 1, parkAddress);
 		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
 		parksFlexTable.setText(0, 3, "Add Favorite");
 
-
 		// Create table for restaurant data.
 		restaurantFlexTable.setText(0, 0, "Name");
-		restaurantFlexTable.setText(0, 1, "Status");
+		restaurantFlexTable.setWidget(0, 1, restaurantStatus);
 		restaurantFlexTable.setText(0, 2, "Address");
 		restaurantFlexTable.setText(0, 3, "Food");
 		restaurantFlexTable.setText(0, 4, "Add Favorite");
@@ -409,7 +439,7 @@ public class KillersProject implements EntryPoint {
 		favoriteRestaurantTable.setText(0, 2, "Address");
 		favoriteRestaurantTable.setText(0, 3, "Food");
 		favoriteRestaurantTable.setText(0, 4, "Remove Favorite");
-		
+
 		// Create table for favorite parks data
 		favoriteParkTable.setText(0, 0, "Name");
 		favoriteParkTable.setText(0, 1, "Address");
@@ -459,6 +489,22 @@ public class KillersProject implements EntryPoint {
 		RootPanel.get("content-window").add(mainPanel);
 
 		buildMapUi();
+	}
+
+	private void loadAdminPage() {
+		Button b = new Button("Parse", new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				adminPanel.clear();
+				loadAppData();
+				loadBoxes();
+			}
+		});
+		
+		Label adminLabel = new Label(
+				"Press the button to load the application data");
+		adminPanel.add(adminLabel);
+		adminPanel.add(b);
+		RootPanel.get("content-window").add(adminPanel);
 	}
 
 	private void buildMapUi() {
@@ -791,6 +837,42 @@ public class KillersProject implements EntryPoint {
 		marker.setTitle(r.getName());
 	}
 
+	private void sortRestaurants(int restaurantTableSortColumn,
+			boolean restaurantTableReverseSort) {
+		switch (restaurantTableSortColumn) {
+		case 0: {
+			if (restaurantTableReverseSort) {
+				Collections.sort(restaurantList,
+						Collections.reverseOrder(RestaurantStatusComparator));
+			} else {
+				Collections.sort(restaurantList, RestaurantStatusComparator);
+			}
+			break;
+		}
+		case 2: {
+			if (parkTableReverseSort) {
+				Collections.sort(parkList,
+						Collections.reverseOrder(ParkNeighbourhoodComparator));
+			} else {
+				Collections.sort(parkList, ParkNeighbourhoodComparator);
+			}
+			break;
+		}
+		case 1: {
+			if (parkTableReverseSort) {
+				Collections.sort(parkList,
+						Collections.reverseOrder(ParkAddressComparator));
+			} else {
+				Collections.sort(parkList, ParkAddressComparator);
+			}
+			break;
+		}
+		default: {
+			// Nothing to sort
+		}
+		}
+	}
+
 	private void sortParks(int parkTableSortColumn, boolean parkTableReverseSort) {
 		switch (parkTableSortColumn) {
 		case 0: {
@@ -862,6 +944,19 @@ public class KillersProject implements EntryPoint {
 				return 1;
 			}
 			return obj1.getAddress().compareTo(obj2.getAddress());
+		}
+
+	};
+	public static Comparator<Restaurant> RestaurantStatusComparator = new Comparator<Restaurant>() {
+		public int compare(Restaurant obj1, Restaurant obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getstatus().compareTo(obj2.getstatus());
 		}
 
 	};
