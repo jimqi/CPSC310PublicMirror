@@ -483,7 +483,7 @@ public class KillersProject implements EntryPoint {
 					}
 					loadFavoriteRestaurant();
 				}
-				if (event.getSelectedItem() == 1) {
+				if (event.getSelectedItem() == 2) {
 					int numOfFavParkRow = favoriteParkTable.getRowCount();
 					for (int i = 1; i < numOfFavParkRow; i++) {
 						favoriteParkTable.removeRow(1);
