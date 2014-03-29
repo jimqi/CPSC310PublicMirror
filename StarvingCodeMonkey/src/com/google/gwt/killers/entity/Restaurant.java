@@ -39,7 +39,7 @@ public class Restaurant extends Place implements Serializable {
 		this.status = status;
 	}
 
-	public String getvendorType() {
+	public String getVendorType() {
 		return vendorType;
 	}
 	

@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -56,6 +57,13 @@ public class KillersProject implements EntryPoint {
 			+ "connection and try again.";
 
 	private VerticalPanel logoutPanel = new VerticalPanel();
+
+	private HorizontalPanel radiusSearchPanel = new HorizontalPanel();
+	private Label findLabel = new Label("Find");
+	private Label radiusLabel = new Label("within radius (KM):");
+	private ListBox placeMenu = new ListBox();
+	private ListBox radiusMenu = new ListBox();
+	private Button radiusSearchButton = new Button("Go");
 
 	private TabPanel mainPanel = new TabPanel();
 	// private TabLayoutPanel mainPanel = new TabLayoutPanel(2, Unit.EM);
@@ -317,8 +325,8 @@ public class KillersProject implements EntryPoint {
 		// Assemble Main panel.
 		mainPanel.add(parksFlexTable, "Parks");
 		mainPanel.add(restaurantFlexTable, "Restaurants");
-		mainPanel.add(favoriteRestaurantTable, "Favorite Restaurant");
 		mainPanel.add(favoriteParkTable, "Favorite Park");
+		mainPanel.add(favoriteRestaurantTable, "Favorite Restaurant");
 
 		// Set up sign out hyperlink.
 		signOutLink.setHref(loginInfo.getLogoutUrl());
@@ -327,7 +335,37 @@ public class KillersProject implements EntryPoint {
 		logoutPanel.add(signOutLink);
 		logoutPanel.setSpacing(15);
 
+		// FIXME Radius Search Panel
+		placeMenu.addItem("Parks");
+		placeMenu.addItem("Restaurants");
+
+		radiusMenu.addItem("1");
+		radiusMenu.addItem("3");
+		radiusMenu.addItem("5");
+		radiusMenu.addItem("10");
+
+		radiusSearchButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int placeIndex = placeMenu.getSelectedIndex();
+				String placeStr = placeMenu.getItemText(placeIndex);
+				int radiusIndex = radiusMenu.getSelectedIndex();
+				String radiusStr = radiusMenu.getItemText(radiusIndex);
+				int radius = Integer.valueOf(radiusStr);
+				logger.info("Searching " + placeStr + " within radius "
+						+ radius + " KM");
+			}
+		});
+
+		radiusSearchPanel.add(findLabel);
+		radiusSearchPanel.add(placeMenu);
+		radiusSearchPanel.add(radiusLabel);
+		radiusSearchPanel.add(radiusMenu);
+		radiusSearchPanel.add(radiusSearchButton);
+		radiusSearchPanel.setSpacing(3);
+		radiusSearchPanel.setHeight("60px");
+
 		Anchor parkName = new Anchor("Name");
+		parkName.setHTML("<span style=\"color: white;\">Name</span>");
 		parkName.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (0 == parkTableSortColumn) {
@@ -351,6 +389,8 @@ public class KillersProject implements EntryPoint {
 		});
 
 		Anchor parkNeighbourhood = new Anchor("Neighbourhood");
+		parkNeighbourhood
+				.setHTML("<span style=\"color: white;\">Neighbourhood</span>");
 		parkNeighbourhood.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (2 == parkTableSortColumn) {
@@ -374,6 +414,7 @@ public class KillersProject implements EntryPoint {
 		});
 
 		Anchor parkAddress = new Anchor("Address");
+		parkAddress.setHTML("<span style=\"color: white;\">Address</span>");
 		parkAddress.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (1 == parkTableSortColumn) {
@@ -397,6 +438,7 @@ public class KillersProject implements EntryPoint {
 		});
 
 		Anchor restaurantName = new Anchor("Name");
+		restaurantName.setHTML("<span style=\"color: white;\">Name</span>");
 		restaurantName.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (0 == restaurantTableSortColumn) {
@@ -421,6 +463,7 @@ public class KillersProject implements EntryPoint {
 		});
 
 		Anchor restaurantStatus = new Anchor("Status");
+		restaurantStatus.setHTML("<span style=\"color: white;\">Status</span>");
 		restaurantStatus.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (1 == restaurantTableSortColumn) {
@@ -445,6 +488,8 @@ public class KillersProject implements EntryPoint {
 		});
 
 		Anchor restaurantAddress = new Anchor("Address");
+		restaurantAddress
+				.setHTML("<span style=\"color: white;\">Address</span>");
 		restaurantAddress.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (2 == restaurantTableSortColumn) {
@@ -467,7 +512,9 @@ public class KillersProject implements EntryPoint {
 				displayRestaurants(restaurantList);
 			}
 		});
-		Anchor restaurantVendorType = new Anchor("VendorType");
+		Anchor restaurantVendorType = new Anchor("Food Type");
+		restaurantVendorType
+				.setHTML("<span style=\"color: white;\">Food Type</span>");
 		restaurantVendorType.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (3 == restaurantTableSortColumn) {
@@ -476,8 +523,8 @@ public class KillersProject implements EntryPoint {
 					restaurantTableSortColumn = 3;
 					restaurantTableReverseSort = false;
 				}
-				String text = restaurantTableReverseSort ? "VendorType &#9660;"
-						: "VendorType &#9650;";
+				String text = restaurantTableReverseSort ? "Food Type &#9660;"
+						: "Food Type &#9650;";
 				Anchor col = (Anchor) event.getSource();
 				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
 
@@ -568,6 +615,7 @@ public class KillersProject implements EntryPoint {
 
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("content-window").add(logoutPanel);
+		RootPanel.get("content-window").add(radiusSearchPanel);
 		RootPanel.get("content-window").add(mainPanel);
 
 		buildMapUi();
@@ -1002,11 +1050,10 @@ public class KillersProject implements EntryPoint {
 		}
 		case 3: {
 			if (restaurantTableReverseSort) {
-				Collections.sort(restaurantList, Collections
-						.reverseOrder(RestaurantFoodComparator));
+				Collections.sort(restaurantList,
+						Collections.reverseOrder(RestaurantFoodComparator));
 			} else {
-				Collections
-						.sort(restaurantList, RestaurantFoodComparator);
+				Collections.sort(restaurantList, RestaurantFoodComparator);
 			}
 			break;
 		}
