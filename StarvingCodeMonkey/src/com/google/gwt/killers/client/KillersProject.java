@@ -396,13 +396,37 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 
-		Anchor restaurantStatus = new Anchor("Status");
-		restaurantStatus.addClickHandler(new ClickHandler() {
+		Anchor restaurantName = new Anchor("Name");
+		restaurantName.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (0 == restaurantTableSortColumn) {
 					restaurantTableReverseSort = !restaurantTableReverseSort;
 				} else {
 					restaurantTableSortColumn = 0;
+					restaurantTableReverseSort = false;
+				}
+				String text = restaurantTableReverseSort ? "Name &#9660;"
+						: "Name &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortRestaurants(restaurantTableSortColumn,
+						restaurantTableReverseSort);
+				int rowCount = restaurantFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					restaurantFlexTable.removeRow(i);
+				}
+				displayRestaurants(restaurantList);
+			}
+		});
+
+		Anchor restaurantStatus = new Anchor("Status");
+		restaurantStatus.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (1 == restaurantTableSortColumn) {
+					restaurantTableReverseSort = !restaurantTableReverseSort;
+				} else {
+					restaurantTableSortColumn = 1;
 					restaurantTableReverseSort = false;
 				}
 				String text = restaurantTableReverseSort ? "Status &#9660;"
@@ -420,17 +444,63 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 
+		Anchor restaurantAddress = new Anchor("Address");
+		restaurantAddress.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (2 == restaurantTableSortColumn) {
+					restaurantTableReverseSort = !restaurantTableReverseSort;
+				} else {
+					restaurantTableSortColumn = 2;
+					restaurantTableReverseSort = false;
+				}
+				String text = restaurantTableReverseSort ? "Address &#9660;"
+						: "Address &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortRestaurants(restaurantTableSortColumn,
+						restaurantTableReverseSort);
+				int rowCount = restaurantFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					restaurantFlexTable.removeRow(i);
+				}
+				displayRestaurants(restaurantList);
+			}
+		});
+		Anchor restaurantVendorType = new Anchor("VendorType");
+		restaurantVendorType.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (3 == restaurantTableSortColumn) {
+					restaurantTableReverseSort = !restaurantTableReverseSort;
+				} else {
+					restaurantTableSortColumn = 3;
+					restaurantTableReverseSort = false;
+				}
+				String text = restaurantTableReverseSort ? "VendorType &#9660;"
+						: "VendorType &#9650;";
+				Anchor col = (Anchor) event.getSource();
+				col.setHTML("<span style=\"color: white;\">" + text + "</span>");
+
+				sortRestaurants(restaurantTableSortColumn,
+						restaurantTableReverseSort);
+				int rowCount = restaurantFlexTable.getRowCount();
+				for (int i = rowCount - 1; i >= 1; i--) {
+					restaurantFlexTable.removeRow(i);
+				}
+				displayRestaurants(restaurantList);
+			}
+		});
 		// Create table for park data.
 		parksFlexTable.setWidget(0, 0, parkName);
 		parksFlexTable.setWidget(0, 1, parkAddress);
 		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
 		parksFlexTable.setText(0, 3, "Add Favorite");
 
-		// Create table for restaurant data.
-		restaurantFlexTable.setText(0, 0, "Name");
+		// Create table for restaurant data.//Attantion
+		restaurantFlexTable.setWidget(0, 0, restaurantName);
 		restaurantFlexTable.setWidget(0, 1, restaurantStatus);
-		restaurantFlexTable.setText(0, 2, "Address");
-		restaurantFlexTable.setText(0, 3, "Food");
+		restaurantFlexTable.setWidget(0, 2, restaurantAddress);
+		restaurantFlexTable.setWidget(0, 3, restaurantVendorType);
 		restaurantFlexTable.setText(0, 4, "Add Favorite");
 
 		// Create table for favorite restaurant data.
@@ -454,18 +524,16 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.getRowFormatter()
 				.addStyleName(0, "watchListHeader");
 		restaurantFlexTable.addStyleName("watchList");
-		
+
 		favoriteRestaurantTable.setCellPadding(6);
 		favoriteRestaurantTable.getRowFormatter().addStyleName(0,
 				"watchListHeader");
 		favoriteRestaurantTable.addStyleName("watchList");
-		
+
 		favoriteParkTable.setCellPadding(6);
 		favoriteParkTable.getRowFormatter().addStyleName(0, "watchListHeader");
 		favoriteParkTable.addStyleName("watchList");
-		
-		
-				
+
 		mainPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
 			// @Override
@@ -513,7 +581,7 @@ public class KillersProject implements EntryPoint {
 				loadBoxes();
 			}
 		});
-		
+
 		Label adminLabel = new Label(
 				"Press the button to load the application data");
 		adminPanel.add(adminLabel);
@@ -564,8 +632,6 @@ public class KillersProject implements EntryPoint {
 			row++;
 		}
 	}
-	
-	
 
 	private void refreshRestaurantIndex() {
 		int row = 1;
@@ -593,10 +659,10 @@ public class KillersProject implements EntryPoint {
 		favoriteRestaurantTable.removeRow(obj.getRow());
 
 	}
-	
+
 	private void loadFavoritePark() {
 		int row = 1;
-		
+
 		for (final Park obj : parks) {
 			favoriteParkTable.setText(row, 0, obj.getName());
 			favoriteParkTable.setText(row, 1, obj.getAddress());
@@ -615,12 +681,12 @@ public class KillersProject implements EntryPoint {
 			row++;
 		}
 	}
-	
-	private void removeFromFavParkList(Park obj){
+
+	private void removeFromFavParkList(Park obj) {
 		Park target = null;
-		
-		for (Park park : parks){
-			if(park.getId().equalsIgnoreCase(obj.getId())){
+
+		for (Park park : parks) {
+			if (park.getId().equalsIgnoreCase(obj.getId())) {
 				target = park;
 			}
 		}
@@ -628,18 +694,16 @@ public class KillersProject implements EntryPoint {
 			parks.remove(target);
 		}
 		favoriteParkTable.removeRow(obj.getRow());
-			
+
 	}
-	
+
 	private void refreshParkIndex() {
 		int row = 1;
-		for (Park park: parks){
+		for (Park park : parks) {
 			park.setRow(row);
 			row++;
 		}
 	}
-	
-	
 
 	private void loadParks() {
 		parkService.getParks(new AsyncCallback<List<Park>>() {
@@ -699,7 +763,7 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 		parksFlexTable.setWidget(row, 0, parkName);
-		
+
 		Button addFavorite = new Button();
 		addFavorite.setText("add to favorite");
 		addFavorite.addClickHandler(new ClickHandler() {
@@ -838,19 +902,19 @@ public class KillersProject implements EntryPoint {
 		// restaurants.add(obj);
 
 	}
-	
+
 	private void addToFavoriteParkList(Park obj) {
-		if(parks.size() == 0) {
+		if (parks.size() == 0) {
 			parks.add(obj);
-		}
-		else {
+		} else {
 			for (Park park : parks) {
-				if(park.getId().equalsIgnoreCase(obj.getId())) {
+				if (park.getId().equalsIgnoreCase(obj.getId())) {
 					return;
 				}
 			}
 			parks.add(obj);
-;		}
+			;
+		}
 	}
 
 	private void displayRestaurant(final Restaurant obj) {
@@ -864,8 +928,8 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setText(row, 2, obj.getAddress());
 		restaurantFlexTable.setText(row, 3, obj.getFood());
 
-		Anchor parkName = new Anchor(obj.getName());
-		parkName.addClickHandler(new ClickHandler() {
+		Anchor restaurantName = new Anchor(obj.getName());
+		restaurantName.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				Restaurant restaurant = selectRestaurant(restaurantId);
 				if (restaurant != null) {
@@ -881,7 +945,7 @@ public class KillersProject implements EntryPoint {
 				}
 			}
 		});
-		restaurantFlexTable.setWidget(row, 0, parkName);
+		restaurantFlexTable.setWidget(row, 0, restaurantName);
 
 		Button addFavorite = new Button();
 		addFavorite.setText("add to favorite");
@@ -927,7 +991,7 @@ public class KillersProject implements EntryPoint {
 	private void sortRestaurants(int restaurantTableSortColumn,
 			boolean restaurantTableReverseSort) {
 		switch (restaurantTableSortColumn) {
-		case 0: {
+		case 1: {
 			if (restaurantTableReverseSort) {
 				Collections.sort(restaurantList,
 						Collections.reverseOrder(RestaurantStatusComparator));
@@ -936,21 +1000,31 @@ public class KillersProject implements EntryPoint {
 			}
 			break;
 		}
-		case 2: {
-			if (parkTableReverseSort) {
-				Collections.sort(parkList,
-						Collections.reverseOrder(ParkNeighbourhoodComparator));
+		case 3: {
+			if (restaurantTableReverseSort) {
+				Collections.sort(restaurantList, Collections
+						.reverseOrder(RestaurantFoodComparator));
 			} else {
-				Collections.sort(parkList, ParkNeighbourhoodComparator);
+				Collections
+						.sort(restaurantList, RestaurantFoodComparator);
 			}
 			break;
 		}
-		case 1: {
-			if (parkTableReverseSort) {
-				Collections.sort(parkList,
-						Collections.reverseOrder(ParkAddressComparator));
+		case 2: {
+			if (restaurantTableReverseSort) {
+				Collections.sort(restaurantList,
+						Collections.reverseOrder(RestaurantAddressComparator));
 			} else {
-				Collections.sort(parkList, ParkAddressComparator);
+				Collections.sort(restaurantList, RestaurantAddressComparator);
+			}
+			break;
+		}
+		case 0: {
+			if (restaurantTableReverseSort) {
+				Collections.sort(restaurantList,
+						Collections.reverseOrder(RestaurantNameComparator));
+			} else {
+				Collections.sort(restaurantList, RestaurantNameComparator);
 			}
 			break;
 		}
@@ -1047,4 +1121,47 @@ public class KillersProject implements EntryPoint {
 		}
 
 	};
+
+	public static Comparator<Restaurant> RestaurantFoodComparator = new Comparator<Restaurant>() {
+		public int compare(Restaurant obj1, Restaurant obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getFood().compareTo(obj2.getFood());
+		}
+
+	};
+
+	public static Comparator<Restaurant> RestaurantAddressComparator = new Comparator<Restaurant>() {
+		public int compare(Restaurant obj1, Restaurant obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getAddress().compareTo(obj2.getAddress());
+		}
+
+	};
+
+	public static Comparator<Restaurant> RestaurantNameComparator = new Comparator<Restaurant>() {
+		public int compare(Restaurant obj1, Restaurant obj2) {
+			if (obj1 == null && obj2 == null) {
+				return 0;
+			} else if (obj1 == null) {
+				return -1;
+			} else if (obj2 == null) {
+				return 1;
+			}
+			return obj1.getName().compareTo(obj2.getName());
+		}
+
+	};
+
 }
