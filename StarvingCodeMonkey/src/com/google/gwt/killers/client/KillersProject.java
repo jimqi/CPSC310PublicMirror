@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.maps.gwt.client.Circle;
+import com.google.maps.gwt.client.CircleOptions;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
@@ -64,6 +66,7 @@ public class KillersProject implements EntryPoint {
 	private ListBox placeMenu = new ListBox();
 	private ListBox radiusMenu = new ListBox();
 	private Button radiusSearchButton = new Button("Go");
+	Circle circle = null;
 
 	private TabPanel mainPanel = new TabPanel();
 	// private TabLayoutPanel mainPanel = new TabLayoutPanel(2, Unit.EM);
@@ -335,7 +338,6 @@ public class KillersProject implements EntryPoint {
 		logoutPanel.add(signOutLink);
 		logoutPanel.setSpacing(15);
 
-		// FIXME Radius Search Panel
 		placeMenu.addItem("Parks");
 		placeMenu.addItem("Restaurants");
 
@@ -353,6 +355,10 @@ public class KillersProject implements EntryPoint {
 				int radius = Integer.valueOf(radiusStr);
 				logger.info("Searching " + placeStr + " within radius "
 						+ radius + " KM");
+
+				deleteOverlays();
+				addCircle(radius);
+				mainPanel.selectTab(4);
 			}
 		});
 
@@ -804,7 +810,7 @@ public class KillersProject implements EntryPoint {
 					// + ul.getLong());
 
 					addPathBetweenMarkers();
-					mainPanel.selectTab(3);
+					mainPanel.selectTab(4);
 				} else {
 					logger.log(Level.SEVERE, "No park was found");
 				}
@@ -883,6 +889,10 @@ public class KillersProject implements EntryPoint {
 			}
 			polylines.clear();
 		}
+
+		if (circle != null) {
+			circle.setMap((GoogleMap) null);
+		}
 	}
 
 	private void addPathBetweenMarkers() {
@@ -898,6 +908,28 @@ public class KillersProject implements EntryPoint {
 			poly.getPath().push(m.getPosition());
 		}
 		polylines.add(poly);
+	}
+
+	private void addCircle(int radiusInKM) {
+		int radiusInMeters = 1000 * radiusInKM;
+
+		// TODO Need to get the actual user location.
+		// For now, we use dummy data
+		double dummyLatitude = 49.223790;
+		double dummyLongitude = -123.148965;
+		LatLng location = LatLng.create(dummyLatitude, dummyLongitude);
+		
+		map.panTo(location);
+		map.setZoom(11.0);
+
+		CircleOptions circleOptions = CircleOptions.create();
+		circleOptions.setFillOpacity(0.2);
+		circleOptions.setFillColor("blue");
+		circleOptions.setStrokeColor("yellow");
+		circle = Circle.create(circleOptions);
+		circle.setCenter(location);
+		circle.setRadius(radiusInMeters);
+		circle.setMap(map);
 	}
 
 	private void handleError(Throwable error) {
