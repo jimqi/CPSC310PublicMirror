@@ -17,7 +17,7 @@ public class RestaurantServiceImpl extends RemoteServiceServlet implements
 		RestaurantService {
 
 	private static final long serialVersionUID = -4482117465037115147L;
-	private static final Logger LOG = Logger.getLogger(ParkServiceImpl.class
+	private static final Logger LOG = Logger.getLogger(RestaurantServiceImpl.class
 			.getName());
 
 	public List<Restaurant> getRestaurants() throws NotLoggedInException {

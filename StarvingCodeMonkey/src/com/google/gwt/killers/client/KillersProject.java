@@ -107,11 +107,11 @@ public class KillersProject implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
 	private final ParkServiceAsync parkService = GWT.create(ParkService.class);
 	private final RestaurantServiceAsync restaurantService = GWT
 			.create(RestaurantService.class);
+	private final LocationServiceAsync locationService = GWT
+			.create(LocationService.class);
 
 	private List<Park> parkList = new ArrayList<Park>();
 	private List<Restaurant> restaurantList = new ArrayList<Restaurant>();
@@ -343,6 +343,7 @@ public class KillersProject implements EntryPoint {
 		placeMenu.addItem("Restaurants");
 
 		radiusMenu.addItem("1");
+		radiusMenu.addItem("2");
 		radiusMenu.addItem("3");
 		radiusMenu.addItem("5");
 		radiusMenu.addItem("10");
@@ -358,7 +359,58 @@ public class KillersProject implements EntryPoint {
 						+ radius + " KM");
 
 				deleteOverlays();
-				addCircle(radius);
+
+				// TODO Need to get the actual user location.
+				// For now, we use dummy data
+				double dummyLatitude = 49.223790;
+				double dummyLongitude = -123.148965;
+
+				if (placeIndex == 0) {
+					locationService.getParksWithinRadius(radius,
+							(float) dummyLatitude, (float) dummyLongitude,
+							parkList, new AsyncCallback<List<Park>>() {
+								public void onFailure(Throwable error) {
+									handleError(error);
+								}
+
+								public void onSuccess(List<Park> result) {
+									int size = -1;
+									if (result != null) {
+										size = result.size();
+									}
+									logger.log(Level.INFO,
+											"Number of parks within radius: "
+													+ size);
+									for (Park park : result) {
+										addParkMarker(park);
+									}
+								}
+							});
+				} else {
+					locationService.getRestaurantsWithinRadius(radius,
+							(float) dummyLatitude, (float) dummyLongitude,
+							restaurantList,
+							new AsyncCallback<List<Restaurant>>() {
+								public void onFailure(Throwable error) {
+									handleError(error);
+								}
+
+								public void onSuccess(List<Restaurant> result) {
+									int size = -1;
+									if (result != null) {
+										size = result.size();
+									}
+									logger.log(Level.INFO,
+											"Number of restaurants within radius: "
+													+ size);
+									for (Restaurant r : result) {
+										addRestaurantMarker(r);
+									}
+								}
+							});
+				}
+
+				addCircle(radius, dummyLatitude, dummyLongitude);
 				mainPanel.selectTab(4);
 			}
 		});
@@ -830,10 +882,10 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 		parksFlexTable.setWidget(row, 3, addFavorite);
-		
-		//add tweet button
-		//TODO fix up button
-		
+
+		// add tweet button
+		// TODO fix up button
+
 		String s = "<a href=\"https://twitter.com/share\" class=\"twitter-share-button\" data-dnt=\"true\" data-count=\"none\" data-via=\"twitterapi\">Tweet</a>";
 		HTML h = new HTML(s);
 		parksFlexTable.setWidget(row, 4, h);
@@ -851,12 +903,24 @@ public class KillersProject implements EntryPoint {
 	private void addParkMarker(final Park p) {
 		LatLng location = LatLng.create(p.getLatitude(), p.getLongitude());
 		map.panTo(location);
-		map.setZoom(11.0);
+		map.setZoom(12.0);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
 		Marker marker = Marker.create(markerOpts);
 		marker.setTitle(p.getName());
+		markers.add(marker);
+	}
+
+	private void addRestaurantMarker(final Restaurant r) {
+		LatLng location = LatLng.create(r.getLatitude(), r.getLongitude());
+		map.panTo(location);
+		map.setZoom(12.0);
+		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setPosition(location);
+		markerOpts.setMap(map);
+		Marker marker = Marker.create(markerOpts);
+		marker.setTitle(r.getName());
 		markers.add(marker);
 	}
 
@@ -867,16 +931,6 @@ public class KillersProject implements EntryPoint {
 		double dummyLongitude = -123.148965;
 
 		LatLng location = LatLng.create(dummyLatitude, dummyLongitude);
-		MarkerOptions markerOpts = MarkerOptions.create();
-		markerOpts.setPosition(location);
-		markerOpts.setMap(map);
-		Marker marker = Marker.create(markerOpts);
-		marker.setTitle("User's Current Location");
-		markers.add(marker);
-	}
-
-	private void addUserMarker(double lattt, double longgg) {
-		LatLng location = LatLng.create(lattt, longgg);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
@@ -920,17 +974,13 @@ public class KillersProject implements EntryPoint {
 		polylines.add(poly);
 	}
 
-	private void addCircle(int radiusInKM) {
+	private void addCircle(int radiusInKM, double centerLat, double centerLon) {
 		int radiusInMeters = 1000 * radiusInKM;
 
-		// TODO Need to get the actual user location.
-		// For now, we use dummy data
-		double dummyLatitude = 49.223790;
-		double dummyLongitude = -123.148965;
-		LatLng location = LatLng.create(dummyLatitude, dummyLongitude);
-		
+		LatLng location = LatLng.create(centerLat, centerLon);
+
 		map.panTo(location);
-		map.setZoom(11.0);
+		map.setZoom(12.0);
 
 		CircleOptions circleOptions = CircleOptions.create();
 		circleOptions.setFillOpacity(0.2);
@@ -1066,16 +1116,6 @@ public class KillersProject implements EntryPoint {
 			}
 		}
 		return null;
-	}
-
-	private void addRestaurantMarker(final Restaurant r) {
-		LatLng location = LatLng.create(r.getLatitude(), r.getLongitude());
-		map.panTo(location);
-		MarkerOptions markerOpts = MarkerOptions.create();
-		markerOpts.setPosition(location);
-		markerOpts.setMap(map);
-		Marker marker = Marker.create(markerOpts);
-		marker.setTitle(r.getName());
 	}
 
 	private void sortRestaurants(int restaurantTableSortColumn,
