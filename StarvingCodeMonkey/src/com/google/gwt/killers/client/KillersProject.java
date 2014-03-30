@@ -548,6 +548,7 @@ public class KillersProject implements EntryPoint {
 		parksFlexTable.setWidget(0, 1, parkAddress);
 		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
 		parksFlexTable.setText(0, 3, "Add Favorite");
+		parksFlexTable.setText(0, 4, "Share");
 
 		// Create table for restaurant data.//Attantion
 		restaurantFlexTable.setWidget(0, 0, restaurantName);
@@ -555,6 +556,7 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setWidget(0, 2, restaurantAddress);
 		restaurantFlexTable.setWidget(0, 3, restaurantVendorType);
 		restaurantFlexTable.setText(0, 4, "Add Favorite");
+		restaurantFlexTable.setText(0, 5, "Share");
 
 		// Create table for favorite restaurant data.
 		favoriteRestaurantTable.setText(0, 0, "Name");
