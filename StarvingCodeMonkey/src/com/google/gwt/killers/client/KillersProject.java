@@ -21,6 +21,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -829,6 +830,13 @@ public class KillersProject implements EntryPoint {
 			}
 		});
 		parksFlexTable.setWidget(row, 3, addFavorite);
+		
+		//add tweet button
+		//TODO fix up button
+		
+		String s = "<a href=\"https://twitter.com/share\" class=\"twitter-share-button\" data-dnt=\"true\" data-count=\"none\" data-via=\"twitterapi\">Tweet</a>";
+		HTML h = new HTML(s);
+		parksFlexTable.setWidget(row, 4, h);
 	}
 
 	private Park selectPark(final String parkId) {
