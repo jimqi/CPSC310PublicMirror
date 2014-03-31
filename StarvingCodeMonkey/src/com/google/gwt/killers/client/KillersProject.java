@@ -119,7 +119,6 @@ public class KillersProject implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
-	
 	private Button twitterButton = new Button("tweet");
 	
 	public void onModuleLoad() {
