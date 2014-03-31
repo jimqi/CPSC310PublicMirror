@@ -607,6 +607,7 @@ public class KillersProject implements EntryPoint {
 		parksFlexTable.setWidget(0, 2, parkNeighbourhood);
 		parksFlexTable.setText(0, 3, "Add Favorite");
 		parksFlexTable.setText(0, 4, "Share");
+		parksFlexTable.setWidth("100em");
 
 		// Create table for restaurant data.//Attantion
 		restaurantFlexTable.setWidget(0, 0, restaurantName);
@@ -615,6 +616,7 @@ public class KillersProject implements EntryPoint {
 		restaurantFlexTable.setWidget(0, 3, restaurantVendorType);
 		restaurantFlexTable.setText(0, 4, "Add Favorite");
 		restaurantFlexTable.setText(0, 5, "Share");
+		restaurantFlexTable.setWidth("100em");
 
 		// Create table for favorite restaurant data.
 		favoriteRestaurantTable.setText(0, 0, "Name");
@@ -622,12 +624,14 @@ public class KillersProject implements EntryPoint {
 		favoriteRestaurantTable.setText(0, 2, "Address");
 		favoriteRestaurantTable.setText(0, 3, "Food");
 		favoriteRestaurantTable.setText(0, 4, "Remove Favorite");
+		favoriteRestaurantTable.setWidth("100em");
 
 		// Create table for favorite parks data
 		favoriteParkTable.setText(0, 0, "Name");
 		favoriteParkTable.setText(0, 1, "Address");
 		favoriteParkTable.setText(0, 2, "Neighbourhood");
 		favoriteParkTable.setText(0, 3, "Remove Favorite");
+		favoriteParkTable.setWidth("100em");
 
 		// Add styles to elements in the table.
 		parksFlexTable.setCellPadding(6);
@@ -706,7 +710,7 @@ public class KillersProject implements EntryPoint {
 	private void buildMapUi() {
 		// TODO add a map
 		SimplePanel widg = new SimplePanel();
-		widg.setSize("600px", "800px");
+		widg.setSize("100em", "80em");
 		mainPanel.add(widg, "Map View");
 
 		LatLng myLatLng = LatLng.create(49.255944, -123.1205715);
