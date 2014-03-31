@@ -142,6 +142,7 @@ public class KillersProject implements EntryPoint {
 					}
 				});
 
+		
 		// //TODO Create CellTable
 		//
 		// // Create a CellTable.
@@ -364,6 +365,8 @@ public class KillersProject implements EntryPoint {
 				// For now, we use dummy data
 				double dummyLatitude = 49.223790;
 				double dummyLongitude = -123.148965;
+				
+				
 
 				if (placeIndex == 0) {
 					locationService.getParksWithinRadius(radius,
