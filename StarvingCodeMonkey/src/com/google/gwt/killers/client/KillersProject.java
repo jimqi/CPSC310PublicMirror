@@ -119,6 +119,9 @@ public class KillersProject implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
+	
+	private Button twitterButton = new Button("tweet");
+	
 	public void onModuleLoad() {
 		// Check login status using login service.
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
@@ -880,15 +883,19 @@ public class KillersProject implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				addToFavoriteParkList(obj);
 			}
-		});
+		});		
 		parksFlexTable.setWidget(row, 3, addFavorite);
 
-		// add tweet button
-		// TODO fix up button
-
-		String s = "<a href=\"https://twitter.com/share\" class=\"twitter-share-button\" data-dnt=\"true\" data-count=\"none\" data-via=\"twitterapi\">Tweet</a>";
-		HTML h = new HTML(s);
-		parksFlexTable.setWidget(row, 4, h);
+		final String tweet = "I'm at " + obj.getName() + " located " + obj.getAddress() + ".";
+		Button twitterButton = new Button();
+		twitterButton.setText("tweet");
+		twitterButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.open("https://twitter.com/intent/tweet?text=" + tweet, "_blank", null);
+			}
+		});
+		parksFlexTable.setWidget(row, 4, twitterButton);
 	}
 
 	private Park selectPark(final String parkId) {
@@ -1107,6 +1114,17 @@ public class KillersProject implements EntryPoint {
 		// });
 		// restaurantFlexTable.setText(addFavorite);
 		restaurantFlexTable.setWidget(row, 4, addFavorite);
+		
+		final String tweet = "Check out " + obj.getName() + " at " +obj.getAddress() + "!";
+		Button twitterButton = new Button();
+		twitterButton.setText("tweet");
+		twitterButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.open("https://twitter.com/intent/tweet?text=" + tweet, "_blank", null);
+			}
+		});
+		restaurantFlexTable.setWidget(row, 5, twitterButton);
 	}
 
 	private Restaurant selectRestaurant(final String restaurantId) {
