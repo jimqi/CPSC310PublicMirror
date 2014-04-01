@@ -10,18 +10,22 @@ import java.util.logging.Logger;
 import com.google.gwt.killers.entity.Park;
 import com.google.gwt.killers.entity.Restaurant;
 import com.google.gwt.killers.entity.UserLocation;
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.geolocation.client.Geolocation;
+import com.google.gwt.geolocation.client.Position;
+import com.google.gwt.geolocation.client.Position.Coordinates;
+import com.google.gwt.geolocation.client.PositionError;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -38,9 +42,11 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MarkerImage;
 import com.google.maps.gwt.client.MarkerOptions;
 import com.google.maps.gwt.client.Polyline;
 import com.google.maps.gwt.client.PolylineOptions;
+import com.google.maps.gwt.client.Size;
 
 //import com.google.gwt.maps.client.overlay.Marker;
 
@@ -68,6 +74,8 @@ public class KillersProject implements EntryPoint {
 	private ListBox radiusMenu = new ListBox();
 	private Button radiusSearchButton = new Button("Go");
 	Circle circle = null;
+
+	Coordinates userLocation = null;
 
 	private TabPanel mainPanel = new TabPanel();
 	// private TabLayoutPanel mainPanel = new TabLayoutPanel(2, Unit.EM);
@@ -120,7 +128,7 @@ public class KillersProject implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	private Button twitterButton = new Button("tweet");
-	
+
 	public void onModuleLoad() {
 		// Check login status using login service.
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
@@ -138,13 +146,13 @@ public class KillersProject implements EntryPoint {
 						} else if (loginInfo.isLoggedIn()) {
 							loadBoxes();
 							loadAppData();
+							getUserCurrentLocation();
 						} else {
 							loadLogin();
 						}
 					}
 				});
 
-		
 		// //TODO Create CellTable
 		//
 		// // Create a CellTable.
@@ -363,17 +371,17 @@ public class KillersProject implements EntryPoint {
 
 				deleteOverlays();
 
-				// TODO Need to get the actual user location.
-				// For now, we use dummy data
-				double dummyLatitude = 49.223790;
-				double dummyLongitude = -123.148965;
-				
-				
+				double latitude = 49.223790;
+				double longitude = -123.148965;
+				if (userLocation != null) {
+					latitude = userLocation.getLatitude();
+					longitude = userLocation.getLongitude();
+				}
 
 				if (placeIndex == 0) {
 					locationService.getParksWithinRadius(radius,
-							(float) dummyLatitude, (float) dummyLongitude,
-							parkList, new AsyncCallback<List<Park>>() {
+							(float) latitude, (float) longitude, parkList,
+							new AsyncCallback<List<Park>>() {
 								public void onFailure(Throwable error) {
 									handleError(error);
 								}
@@ -393,7 +401,7 @@ public class KillersProject implements EntryPoint {
 							});
 				} else {
 					locationService.getRestaurantsWithinRadius(radius,
-							(float) dummyLatitude, (float) dummyLongitude,
+							(float) latitude, (float) longitude,
 							restaurantList,
 							new AsyncCallback<List<Restaurant>>() {
 								public void onFailure(Throwable error) {
@@ -415,7 +423,8 @@ public class KillersProject implements EntryPoint {
 							});
 				}
 
-				addCircle(radius, dummyLatitude, dummyLongitude);
+				addCircle(radius, latitude, longitude);
+				addUserMarker();
 				mainPanel.selectTab(4);
 			}
 		});
@@ -707,8 +716,31 @@ public class KillersProject implements EntryPoint {
 		RootPanel.get("content-window").add(adminPanel);
 	}
 
+	private void getUserCurrentLocation() {
+		Geolocation geolocation = Geolocation.getIfSupported();
+		if (geolocation == null) {
+			logger.info("The browser does not support Geolocation. Using default location.");
+			return;
+		}
+
+		geolocation.getCurrentPosition(new Callback<Position, PositionError>() {
+
+			@Override
+			public void onSuccess(Position result) {
+				userLocation = result.getCoordinates();
+				logger.info("Got user location: "
+						+ result.getCoordinates().getLatitude() + ", "
+						+ result.getCoordinates().getLongitude());
+			}
+
+			@Override
+			public void onFailure(PositionError reason) {
+				Window.alert(reason.getMessage());
+			}
+		});
+	}
+
 	private void buildMapUi() {
-		// TODO add a map
 		SimplePanel widg = new SimplePanel();
 		widg.setSize("100em", "80em");
 		mainPanel.add(widg, "Map View");
@@ -716,7 +748,7 @@ public class KillersProject implements EntryPoint {
 		LatLng myLatLng = LatLng.create(49.255944, -123.1205715);
 		MapOptions myOptions = MapOptions.create();
 		myOptions.setCenter(myLatLng);
-		myOptions.setZoom(11);
+		myOptions.setZoom(13.0);
 		myOptions.setMapTypeId(MapTypeId.ROADMAP);
 		myOptions.setDraggable(true);
 		myOptions.setMapTypeControl(true);
@@ -889,16 +921,18 @@ public class KillersProject implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				addToFavoriteParkList(obj);
 			}
-		});		
+		});
 		parksFlexTable.setWidget(row, 3, addFavorite);
 
-		final String tweet = "I'm at " + obj.getName() + " located " + obj.getAddress() + ".";
+		final String tweet = "I'm at " + obj.getName() + " located "
+				+ obj.getAddress() + ".";
 		Button twitterButton = new Button();
 		twitterButton.setText("tweet");
 		twitterButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.open("https://twitter.com/intent/tweet?text=" + tweet, "_blank", null);
+				Window.open("https://twitter.com/intent/tweet?text=" + tweet,
+						"_blank", null);
 			}
 		});
 		parksFlexTable.setWidget(row, 4, twitterButton);
@@ -916,7 +950,7 @@ public class KillersProject implements EntryPoint {
 	private void addParkMarker(final Park p) {
 		LatLng location = LatLng.create(p.getLatitude(), p.getLongitude());
 		map.panTo(location);
-		map.setZoom(12.0);
+		map.setZoom(13.0);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
@@ -928,7 +962,7 @@ public class KillersProject implements EntryPoint {
 	private void addRestaurantMarker(final Restaurant r) {
 		LatLng location = LatLng.create(r.getLatitude(), r.getLongitude());
 		map.panTo(location);
-		map.setZoom(12.0);
+		map.setZoom(13.0);
 		MarkerOptions markerOpts = MarkerOptions.create();
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
@@ -938,13 +972,20 @@ public class KillersProject implements EntryPoint {
 	}
 
 	private void addUserMarker() {
-		// TODO Need to get the actual user location.
-		// For now, we use dummy data
-		double dummyLatitude = 49.223790;
-		double dummyLongitude = -123.148965;
+		double latitude = 49.223790;
+		double longitude = -123.148965;
+		if (userLocation != null) {
+			latitude = userLocation.getLatitude();
+			longitude = userLocation.getLongitude();
+		}
 
-		LatLng location = LatLng.create(dummyLatitude, dummyLongitude);
+		MarkerImage img = MarkerImage
+				.create("http://maps.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
+						Size.create(22.0, 35.0));
+
+		LatLng location = LatLng.create(latitude, longitude);
 		MarkerOptions markerOpts = MarkerOptions.create();
+		markerOpts.setIcon(img);
 		markerOpts.setPosition(location);
 		markerOpts.setMap(map);
 		Marker marker = Marker.create(markerOpts);
@@ -993,7 +1034,7 @@ public class KillersProject implements EntryPoint {
 		LatLng location = LatLng.create(centerLat, centerLon);
 
 		map.panTo(location);
-		map.setZoom(12.0);
+		map.setZoom(13.0);
 
 		CircleOptions circleOptions = CircleOptions.create();
 		circleOptions.setFillOpacity(0.2);
@@ -1027,7 +1068,7 @@ public class KillersProject implements EntryPoint {
 				if (result != null) {
 					size = result.size();
 				}
-				logger.log(Level.INFO, "Number of loaded parks: " + size);
+				logger.log(Level.INFO, "Number of loaded restaurants: " + size);
 				restaurantList = new ArrayList<Restaurant>(result);
 				displayRestaurants(result);
 			}
@@ -1120,14 +1161,16 @@ public class KillersProject implements EntryPoint {
 		// });
 		// restaurantFlexTable.setText(addFavorite);
 		restaurantFlexTable.setWidget(row, 4, addFavorite);
-		
-		final String tweet = "Check out " + obj.getName() + " at " +obj.getAddress() + "!";
+
+		final String tweet = "Check out " + obj.getName() + " at "
+				+ obj.getAddress() + "!";
 		Button twitterButton = new Button();
 		twitterButton.setText("tweet");
 		twitterButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.open("https://twitter.com/intent/tweet?text=" + tweet, "_blank", null);
+				Window.open("https://twitter.com/intent/tweet?text=" + tweet,
+						"_blank", null);
 			}
 		});
 		restaurantFlexTable.setWidget(row, 5, twitterButton);
