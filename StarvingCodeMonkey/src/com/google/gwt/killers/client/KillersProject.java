@@ -706,6 +706,7 @@ public class KillersProject implements EntryPoint {
 				adminPanel.clear();
 				loadAppData();
 				loadBoxes();
+				getUserCurrentLocation();
 			}
 		});
 
@@ -981,7 +982,7 @@ public class KillersProject implements EntryPoint {
 
 		MarkerImage img = MarkerImage
 				.create("http://maps.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
-						Size.create(22.0, 35.0));
+						Size.create(25.0, 35.0));
 
 		LatLng location = LatLng.create(latitude, longitude);
 		MarkerOptions markerOpts = MarkerOptions.create();
